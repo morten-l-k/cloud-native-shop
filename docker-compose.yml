@@ -1,0 +1,53 @@
+services:
+
+  # -----------------------------
+  # PostgreSQL Database
+  # -----------------------------
+  db:
+    image: postgres:15
+    container_name: b2c_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: b2c_user
+      POSTGRES_PASSWORD: b2c_password
+      POSTGRES_DB: b2c_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+      - ./database/data:/data
+    networks:
+      - backend_network
+
+
+  # -----------------------------
+  # Backend (C# .NET)
+  # -----------------------------
+  # backend:
+  #   networks:
+  #     - backend_network
+  #     - frontend_network
+
+  # -----------------------------
+  # Frontend (React)
+  # -----------------------------
+  # frontend:
+  #   networks:
+  #     - frontend_network
+ 
+# -----------------------------
+# Volumes
+# -----------------------------
+volumes:
+  postgres_data:
+
+
+# -----------------------------
+# Networks
+# -----------------------------
+networks:
+  backend_network:
+    driver: bridge
+  frontend_network:
+    driver: bridge
