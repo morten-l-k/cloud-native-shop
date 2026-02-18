@@ -5,7 +5,7 @@ This project uses Docker Compose to run:
 - PostgreSQL database (container name: b2c_postgres)
 - React + Vite frontend (container name: b2c_frontend)
 
-### Start all containers
+### Start all containers
 To start all containers, run the command from the project root:
 ```bash
 docker compose up --build
