@@ -20,6 +20,22 @@ services:
     networks:
       - backend_network
 
+  # -----------------------------
+  # Frontend (React)
+  # -----------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: b2c_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - frontend_network
+
 
   # -----------------------------
   # Backend (C# .NET)
@@ -29,12 +45,7 @@ services:
   #     - backend_network
   #     - frontend_network
 
-  # -----------------------------
-  # Frontend (React)
-  # -----------------------------
-  # frontend:
-  #   networks:
-  #     - frontend_network
+  
  
 # -----------------------------
 # Volumes
