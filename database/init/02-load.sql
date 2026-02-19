@@ -32,7 +32,7 @@
 
 -- 7. Order items (independent in this phase)
 \echo '[7/9] Loading order_items (~113k rows)...'
-\COPY order_items(order_id, order_item_number, product_id, seller_id, shipping_limit_date, price, freight_value) FROM '/data/olist_order_items_dataset.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"', NULL '');
+\COPY order_items(order_id, order_item_quantity, product_id, seller_id, shipping_limit_date, price, freight_value) FROM '/data/olist_order_items_dataset.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"', NULL '');
 
 -- 8. Order payments (independent in this phase)
 \echo '[8/9] Loading order_payments (~104k rows)...'
