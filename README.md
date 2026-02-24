@@ -3,6 +3,7 @@
 ## Docker setup
 This project uses Docker Compose to run:
 - PostgreSQL database (container name: b2c_postgres)
+- ASP.NET Backend web application (container name: b2c_backend)
 - React + Vite frontend (container name: b2c_frontend)
 
 ### Start all containers
