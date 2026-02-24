@@ -18,7 +18,7 @@ services:
       - ./database/init:/docker-entrypoint-initdb.d
       - ./database/data:/data
     networks:
-      - backend_network
+      - db_network
 
   # -----------------------------
   # Frontend (React)
@@ -40,10 +40,16 @@ services:
   # -----------------------------
   # Backend (C# .NET)
   # -----------------------------
-  # backend:
-  #   networks:
-  #     - backend_network
-  #     - frontend_network
+  backend:
+      build:
+        context: ./backend
+        dockerfile: Dockerfile.backend
+      container_name: b2c_backend
+      ports:
+        - "8080:8080"
+      networks:
+        - db_network
+        - frontend_network
 
   
  
@@ -58,7 +64,7 @@ volumes:
 # Networks
 # -----------------------------
 networks:
-  backend_network:
+  db_network:
     driver: bridge
   frontend_network:
     driver: bridge
