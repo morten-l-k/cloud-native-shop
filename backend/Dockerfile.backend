@@ -1,0 +1,30 @@
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Copy csproj and restore dependencies
+COPY backend.csproj .
+
+#Run command inside container
+RUN dotnet restore 
+
+# Copy everything else and build. Compiled files inserted into out directory /app/publish
+COPY . .
+RUN dotnet publish -c Release -o /app/publish
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+
+# Copy published app from build stage
+COPY --from=build /app/publish .
+
+# Expose port
+EXPOSE 8080
+
+# Set environment to Production
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://+:8080
+
+# Run the app
+ENTRYPOINT ["dotnet", "backend.dll"]
