@@ -1,0 +1,73 @@
+@model CloudNativeShop.Backend.Models.ProductViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>ProductViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductId" class="control-label"></label>
+                <input asp-for="ProductId" class="form-control" />
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductCategoryName" class="control-label"></label>
+                <input asp-for="ProductCategoryName" class="form-control" />
+                <span asp-validation-for="ProductCategoryName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductNameLength" class="control-label"></label>
+                <input asp-for="ProductNameLength" class="form-control" />
+                <span asp-validation-for="ProductNameLength" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductDescriptionLength" class="control-label"></label>
+                <input asp-for="ProductDescriptionLength" class="form-control" />
+                <span asp-validation-for="ProductDescriptionLength" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductPhotosQty" class="control-label"></label>
+                <input asp-for="ProductPhotosQty" class="form-control" />
+                <span asp-validation-for="ProductPhotosQty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductWeightG" class="control-label"></label>
+                <input asp-for="ProductWeightG" class="form-control" />
+                <span asp-validation-for="ProductWeightG" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductLengthCm" class="control-label"></label>
+                <input asp-for="ProductLengthCm" class="form-control" />
+                <span asp-validation-for="ProductLengthCm" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductHeightCm" class="control-label"></label>
+                <input asp-for="ProductHeightCm" class="form-control" />
+                <span asp-validation-for="ProductHeightCm" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductWidthCm" class="control-label"></label>
+                <input asp-for="ProductWidthCm" class="form-control" />
+                <span asp-validation-for="ProductWidthCm" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
