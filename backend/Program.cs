@@ -1,4 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using backend.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<Product>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Product") ?? throw new InvalidOperationException("Connection string 'Product' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
