@@ -1,7 +1,11 @@
-<!-- A simple Header with inline styles for layout -->
-<header style="background-color: #333; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
-  <!-- Interpolation: Shows the value of 'shopName' from app.ts -->
-  <h1 style="margin: 0;">{{ shopName }}</h1>
+<header style="background-color: black; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
+  <!-- We use a dotless 'i' and position a cloud icon above it -->
+  <h1 style="margin: 0;">
+    {{ shopNamePrefix }}<span style="position: relative; display: inline-block;">
+      <app-cloud-icon style="width: 14px; height: 14px; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);"></app-cloud-icon>
+      ı
+    </span>{{ shopNameSuffix }}
+  </h1>
 
   <!-- A placeholder navigation bar -->
   <nav>
