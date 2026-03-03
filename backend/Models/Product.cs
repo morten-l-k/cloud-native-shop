@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CloudNativeShop.Backend.Models
 {
     [Table("products")]  // Map to existing 'products' table
-    public class ProductViewModel
+    public class Product
     {
         [Key]
         [Column("product_id")]

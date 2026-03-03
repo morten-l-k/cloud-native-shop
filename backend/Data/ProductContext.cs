@@ -7,13 +7,13 @@ using CloudNativeShop.Backend.Models;
 
 namespace backend.Data
 {
-    public class Product : DbContext
+    public class ShopContext : DbContext
     {
-        public Product (DbContextOptions<Product> options)
+        public ShopContext(DbContextOptions<ShopContext> options)
             : base(options)
         {
         }
 
-        public DbSet<CloudNativeShop.Backend.Models.ProductViewModel> ProductViewModel { get; set; } = default!;
+        public DbSet<CloudNativeShop.Backend.Models.Product> Product { get; set; } = default!;
     }
 }
