@@ -8,15 +8,14 @@
   </h1>
 
   <!-- A placeholder navigation bar -->
-  <nav>
-    <button>Home</button>
-    <button>Products</button>
-    <button>Cart</button>
-  </nav>
+<nav style="display: flex; gap: .5rem;">
+  <button routerLink="/customer">Home</button>
+  <button routerLink="/seller">Seller</button>
+  <button routerLink="/admin">Admin</button>
+</nav>
 </header>
 
 <!-- The Main Content Area -->
 <main style="padding: 2rem;">
-  <h2>Welcome to the shop</h2>
-
+  <router-outlet></router-outlet>
 </main>
