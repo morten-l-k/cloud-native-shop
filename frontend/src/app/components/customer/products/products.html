@@ -1,0 +1,17 @@
+<section style="display: grid; gap: 1rem;">
+  <h2>All Products</h2>
+
+  <div *ngIf="products$ | async as products; else loading">
+    <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+      <div *ngFor="let product of products" style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
+        <h3 style="margin-top: 0;">{{ 'Product ' + product.productId }}</h3>
+        <p>Description Length: {{ product.productDescriptionLength || 'N/A' }}</p>
+      </div>
+    </div>
+    <p *ngIf="products.length === 0">No products found.</p>
+  </div>
+
+  <ng-template #loading>
+    <p>Loading products...</p>
+  </ng-template>
+</section>

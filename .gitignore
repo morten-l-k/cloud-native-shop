@@ -74,3 +74,4 @@ artifacts/
 *.deps.json
 *.runtimeconfig.json
 *.staticwebassets.* 
+gemini.md

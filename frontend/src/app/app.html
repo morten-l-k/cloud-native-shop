@@ -2,17 +2,12 @@
   <!-- We use a dotless 'i' and position a cloud icon above it -->
   <h1 style="margin: 0;">
     {{ shopNamePrefix }}<span style="position: relative; display: inline-block;">
-      <app-cloud-icon style="width: 14px; height: 14px; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);"></app-cloud-icon>
+      <mat-icon style="color: red; font-size: 14px; width: 14px; height: 14px; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);">cloud</mat-icon>
       ı
     </span>{{ shopNameSuffix }}
   </h1>
 
-  <!-- A placeholder navigation bar -->
-<nav style="display: flex; gap: .5rem;">
-  <button routerLink="/customer">Home</button>
-  <button routerLink="/seller">Seller</button>
-  <button routerLink="/admin">Admin</button>
-</nav>
+  <app-navbar></app-navbar>
 </header>
 
 <!-- The Main Content Area -->
