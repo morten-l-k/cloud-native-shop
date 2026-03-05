@@ -74,8 +74,10 @@ artifacts/
 *.deps.json
 *.runtimeconfig.json
 *.staticwebassets.* 
+gemini.md
 
 # macOS
 .DS_Store
 .AppleDouble
 .LSOverride
+
