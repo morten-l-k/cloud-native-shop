@@ -10,6 +10,10 @@ builder.Services.AddDbContext<ShopContext>(options =>
 // Controllers only, no view support
 builder.Services.AddControllers();
 
+// Add swagger for API documentation
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,6 +27,10 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+
+// Enable middleware to serve generated Swagger as a JSON endpoint and the Swagger UI
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 
