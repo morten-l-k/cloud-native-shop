@@ -23,18 +23,18 @@ services:
   # -----------------------------
   # Frontend (Angular)
   # -----------------------------
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: b2c_frontend
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    networks:
-      - frontend_network
+  # frontend:
+  #   build:
+  #     context: ./frontend
+      # dockerfile: Dockerfile
+  #   container_name: b2c_frontend
+  #   ports:
+  #     - "5173:5173"
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #   networks:
+  #     - frontend_network
 
 
   # -----------------------------
@@ -55,6 +55,13 @@ services:
       networks:
         - db_network
         - frontend_network
+      develop:
+        watch:
+          - action: rebuild
+            path: ./backend
+            ignore:
+              - ./backend/bin
+              - ./backend/obj
 
   
  
