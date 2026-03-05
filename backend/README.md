@@ -12,3 +12,6 @@ The backend is built using ASP.NET Core Web API. It follows a layered architectu
 - **Models**: Represent the data structures used in the application. CRUD operations are performed on these models.
 - **Controllers**: Handle HTTP requests from the client. They are responsible for receiving input from the client and returning appropriate responses.
 - **Views**: Responsible for rendering the user interface.
+
+## API Documentation
+The backend API is documented using Swagger. When the application is running, you can access the Swagger UI at `http://localhost:<port>/swagger` to explore the available API endpoints and their documentation

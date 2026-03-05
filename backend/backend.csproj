@@ -25,6 +25,9 @@
 
     <!-- Scaffolding tools for controllers and views -->
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+
+    <!-- Swagger for API documentation -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
 </Project>

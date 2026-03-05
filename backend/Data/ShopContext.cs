@@ -15,5 +15,6 @@ namespace backend.Data
         }
 
         public DbSet<CloudNativeShop.Backend.Models.Product> Product { get; set; } = default!;
+        public DbSet<CloudNativeShop.Backend.Models.Category> Category { get; set; } = default!;
     }
 }
