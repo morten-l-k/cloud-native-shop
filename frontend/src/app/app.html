@@ -1,38 +1,31 @@
 <mat-sidenav-container class="layout-container">
   <mat-sidenav #drawer mode="over" class="sidebar">
-    <div class="sidebar-content">
-      <h3>Categories</h3>
-
-      <button class="category-btn">Category1</button>
-      <button class="category-btn">Category2</button>
-      <button class="category-btn">Category3</button>
-      <button class="category-btn">Category4</button>
-    </div>
+    <app-sidebar></app-sidebar>
   </mat-sidenav>
 
   <mat-sidenav-content>
     <header class="app-header">
-  <div class="header-left">
-    <button mat-icon-button type="button" (click)="drawer.toggle()" aria-label="Open menu">
-      <mat-icon>menu</mat-icon>
-    </button>
+      <div class="header-left">
+        <button mat-icon-button type="button" (click)="drawer.toggle()" aria-label="Open menu">
+          <mat-icon>menu</mat-icon>
+        </button>
 
-    <a routerLink="/" class="logo-link" aria-label="Go to homepage">
-      <h1 class="shop-title">
-        {{ shopNamePrefix }}
-        <span class="cloud-letter">
-          <mat-icon class="cloud-icon">cloud</mat-icon>
-          ı
-        </span>
-        {{ shopNameSuffix }}
-      </h1>
-    </a>
-  </div>
+        <a routerLink="/customer" class="logo-link" aria-label="Go to homepage">
+          <h1 class="shop-title">
+            {{ shopNamePrefix }}
+            <span class="cloud-letter">
+              <mat-icon class="cloud-icon">cloud</mat-icon>
+              ı
+            </span>
+            {{ shopNameSuffix }}
+          </h1>
+        </a>
+      </div>
 
-  <div class="header-right">
-    <app-navbar></app-navbar>
-  </div>
-</header>
+      <div class="header-right">
+        <app-navbar></app-navbar>
+      </div>
+    </header>
 
     <main class="main-content">
       <router-outlet></router-outlet>

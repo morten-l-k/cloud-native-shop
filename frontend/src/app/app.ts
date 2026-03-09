@@ -1,21 +1,24 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { NavbarComponent } from './global/navbar';
+import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
+
+import { NavbarComponent } from './global/navbar/navbar';
+import { SidebarComponent } from './global/sidebar/sidebar';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   templateUrl: './app.html',
   styleUrl: './app.css',
-  standalone: true,
   imports: [
     CommonModule,
     RouterOutlet,
     RouterLink,
     NavbarComponent,
+    SidebarComponent,
     MatIconModule,
     MatSidenavModule,
     MatButtonModule
@@ -24,6 +27,4 @@ import { CommonModule } from '@angular/common';
 export class App {
   shopNamePrefix = 'Cloud Nat';
   shopNameSuffix = 've Shop';
-
-  categories = ['Category1', 'Category2', 'Category3', 'Category4'];
 }
