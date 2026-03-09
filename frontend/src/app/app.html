@@ -1,16 +1,34 @@
-<header style="background-color: black; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
-  <!-- We use a dotless 'i' and position a cloud icon above it -->
-  <h1 style="margin: 0;">
-    {{ shopNamePrefix }}<span style="position: relative; display: inline-block;">
-      <mat-icon style="color: red; font-size: 14px; width: 14px; height: 14px; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);">cloud</mat-icon>
-      ı
-    </span>{{ shopNameSuffix }}
-  </h1>
+<mat-sidenav-container class="layout-container">
+  <mat-sidenav #drawer mode="over" class="sidebar">
+    <app-sidebar></app-sidebar>
+  </mat-sidenav>
 
-  <app-navbar></app-navbar>
-</header>
+  <mat-sidenav-content>
+    <header class="app-header">
+      <div class="header-left">
+        <button mat-icon-button type="button" (click)="drawer.toggle()" aria-label="Open menu">
+          <mat-icon>menu</mat-icon>
+        </button>
 
-<!-- The Main Content Area -->
-<main style="padding: 2rem;">
-  <router-outlet></router-outlet>
-</main>
+        <a routerLink="/customer" class="logo-link" aria-label="Go to homepage">
+          <h1 class="shop-title">
+            {{ shopNamePrefix }}
+            <span class="cloud-letter">
+              <mat-icon class="cloud-icon">cloud</mat-icon>
+              ı
+            </span>
+            {{ shopNameSuffix }}
+          </h1>
+        </a>
+      </div>
+
+      <div class="header-right">
+        <app-navbar></app-navbar>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
