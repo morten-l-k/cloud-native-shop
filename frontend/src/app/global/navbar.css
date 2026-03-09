@@ -1,4 +1,9 @@
-nav {
+.top-nav {
   display: flex;
-  gap: .5rem;
+  gap: 1rem;
+}
+
+.top-nav button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
 }
