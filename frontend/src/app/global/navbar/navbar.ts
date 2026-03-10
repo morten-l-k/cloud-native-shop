@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -10,5 +10,9 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./navbar.css']
 })
 export class NavbarComponent {
+  @Output() navigate = new EventEmitter<void>();
 
+  onNavigate() {
+    this.navigate.emit();
+  }
 }
