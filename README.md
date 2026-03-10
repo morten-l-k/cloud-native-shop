@@ -23,16 +23,15 @@ After having run the compose-command above, access db directly with:
 docker exec -it b2c_postgres psql -U b2c_user -d b2c_db
 ```
 
-### Access the Frontend (Development)
-Open in your browser:
-```
-http://localhost:5173
-```
-
 ### Stop containers
-
 To tear down containers and volumes (i.e. persistent saved data) run:
 
 ```bash
 docker compose down -v
+```
+
+### Rebuild system from scratch
+To rebuild system from scratch, run:
+```bash
+docker compose up --build --force-recreate --renew-anon-volumes
 ```
