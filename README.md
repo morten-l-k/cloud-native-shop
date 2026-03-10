@@ -4,7 +4,7 @@
 This project uses Docker Compose to run:
 - PostgreSQL database (container name: b2c_postgres)
 - ASP.NET Backend web application (container name: b2c_backend)
-- React + Vite frontend (container name: b2c_frontend)
+- Angular frontend (container name: b2c_frontend)
 
 ### Start all containers
 To start all containers, run the command from the project root:
@@ -17,16 +17,15 @@ After having run the compose-command above, access db directly with:
 docker exec -it b2c_postgres psql -U b2c_user -d b2c_db
 ```
 
-### Access the Frontend (Development)
-Open in your browser:
-```
-http://localhost:5173
-```
-
 ### Stop containers
-
 To tear down containers and volumes (i.e. persistent saved data) run:
 
 ```bash
 docker compose down -v
+```
+
+### Rebuild system from scratch
+To rebuild system from scratch, run:
+```bash
+docker compose up --build --force-recreate --renew-anon-volumes
 ```
