@@ -1,5 +1,26 @@
-<nav class="top-nav">
-  <button routerLink="/customer">Home</button>
-  <button routerLink="/seller">Seller</button>
-  <button routerLink="/admin">Admin</button>
+<nav class="top-nav" aria-label="Primary navigation">
+  <div class="nav-links">
+    <a routerLink="/customer" class="nav-button">Home</a>
+    <a routerLink="/seller" class="nav-button">Seller</a>
+    <a routerLink="/admin" class="nav-button">Admin</a>
+  </div>
+
+  <div class="search-box" aria-label="Search placeholder">
+    <mat-icon class="search-icon">search</mat-icon>
+    <input
+      type="text"
+      placeholder="Search products..."
+      aria-label="Search products"
+    />
+  </div>
+
+  <a routerLink="/customer/cart" class="cart-button" aria-label="Go to cart">
+    <span class="cart-icon-wrapper">
+      <mat-icon class="cart-icon">shopping_cart</mat-icon>
+      <span class="cart-badge" *ngIf="cartItemCount > 0">
+        {{ cartItemCount }}
+      </span>
+    </span>
+    <span>Cart</span>
+  </a>
 </nav>

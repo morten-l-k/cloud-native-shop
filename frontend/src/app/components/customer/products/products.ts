@@ -18,4 +18,8 @@ export class CustomerProductsPage implements OnInit {
   ngOnInit(): void {
     this.products$ = this.productService.getProducts();
   }
+
+  onAddToCart(product: Product): void {
+    // ... (tilføj her?)
+  }
 }

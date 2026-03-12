@@ -3,9 +3,36 @@
 
   <div *ngIf="products$ | async as products; else loading">
     <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
-      <div *ngFor="let product of products" style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
+      <div
+        *ngFor="let product of products"
+        style="border: 1px solid #ddd; border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0,0,0,0.05);"
+      >
         <h3 style="margin-top: 0;">{{ 'Product ' + product.productId }}</h3>
         <p>Description Length: {{ product.productDescriptionLength || 'N/A' }}</p>
+
+        <button
+          type="button"
+          (click)="onAddToCart(product)"
+          style="
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #2563eb;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+          "
+          onmouseover="this.style.backgroundColor='#1d4ed8'"
+          onmouseout="this.style.backgroundColor='#2563eb'"
+        >
+          🛒 Add to cart
+        </button>
+
       </div>
     </div>
     <p *ngIf="products.length === 0">No products found.</p>
