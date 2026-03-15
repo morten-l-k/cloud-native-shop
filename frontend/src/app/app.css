@@ -21,6 +21,8 @@
 .header-right {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex: 1;
 }
 
 .shop-title {
