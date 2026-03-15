@@ -7,8 +7,8 @@
         *ngFor="let product of products"
         style="border: 1px solid #ddd; border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0,0,0,0.05);"
       >
-        <h3 style="margin-top: 0;">{{ 'Product ' + product.productId }}</h3>
-        <p>Description Length: {{ product.productDescriptionLength || 'N/A' }}</p>
+        <h3 style="margin-top: 0;">{{ product.name }}</h3>
+        <p>Price: {{ product.price | number: '1.2-2' }}</p>
 
         <button
           type="button"
