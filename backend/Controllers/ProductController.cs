@@ -24,8 +24,11 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return Ok(await (from p in _context.Product
-                 select p).Take(10).ToListAsync());
+            var products = await (from p in _context.Product
+                                  select p).Take(20).ToListAsync();
+
+            var response = products.Select(MapToResponse).ToList();
+            return Ok(response);
         }
 
         // GET: Product/{id}
@@ -41,7 +44,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(productModel);
+            return Ok(MapToResponse(productModel));
         }
 
         // POST: Product
@@ -76,6 +79,19 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
             
             return NoContent();
+        }
+        // converts the product type into the currents easy response model of our product
+        // see Models/ProductResponse.cs
+        private static ProductResponse MapToResponse(Product product)
+        {
+            return new ProductResponse
+            {
+                Id = product.ProductId,
+                // Product-XXXX
+                Name = $"Product-{Random.Shared.Next(1000, 9999)}",
+                // Double between 5.0 and 505.0
+                Price = decimal.Round((decimal)(Random.Shared.NextDouble() * 500.0 + 5.0), 2)
+            };
         }
     }
 }
