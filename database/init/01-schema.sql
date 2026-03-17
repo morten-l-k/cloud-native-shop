@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS geolocation (
 -- Products table (olist_products_dataset.csv)
 CREATE TABLE IF NOT EXISTS products (
     product_id VARCHAR(64) PRIMARY KEY,
+    product_name VARCHAR(100),
     product_category_name VARCHAR(100),
     product_name_length INTEGER,
     product_description_length INTEGER,
@@ -36,7 +37,8 @@ CREATE TABLE IF NOT EXISTS products (
     product_weight_g INTEGER,
     product_length_cm INTEGER,
     product_height_cm INTEGER,
-    product_width_cm INTEGER
+    product_width_cm INTEGER,
+    product_price DECIMAL(10,2)
 );
 
 -- Sellers table (olist_sellers_dataset.csv)

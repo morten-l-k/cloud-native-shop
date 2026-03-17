@@ -84,17 +84,16 @@ namespace backend.Controllers
         // see Models/ProductResponse.cs
         private async Task<ProductResponse> MapToResponseAsync(Product product)
         {
-            string generatedName = $"Product-{Random.Shared.Next(1000, 9999)}";
-            string imageUrl = await GenerateImageUrl(generatedName);
+            string imageUrl = await GenerateImageUrl(product.ProductName ?? "product");
 
             return new ProductResponse
             {
                 Id = product.ProductId,
-                // Product-XXXX
-                Name = generatedName,
-                // Double between 5.0 and 505.0
-                Price = decimal.Round((decimal)(Random.Shared.NextDouble() * 500.0 + 5.0), 2),
 
+                Name = product.ProductName,
+
+                Price = product.ProductPrice ?? 5.00m,
+                
                 ImageUrl = imageUrl
             };
         }

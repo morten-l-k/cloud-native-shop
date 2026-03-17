@@ -9,6 +9,9 @@ namespace CloudNativeShop.Backend.Models
         [Key]
         [Column("product_id")]
         public string ProductId { get; set; } = string.Empty;
+
+        [Column("product_name")]
+        public string? ProductName { get; set; }
         
         [Column("product_category_name")]
         public string? ProductCategoryName { get; set; }
@@ -33,5 +36,8 @@ namespace CloudNativeShop.Backend.Models
         
         [Column("product_width_cm")]
         public int? ProductWidthCm { get; set; }
+
+        [Column("product_price")]
+        public decimal? ProductPrice { get; set; }
     }
 }
