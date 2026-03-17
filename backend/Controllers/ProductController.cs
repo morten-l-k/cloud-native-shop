@@ -27,7 +27,7 @@ namespace backend.Controllers
             var products = await (from p in _context.Product
                                   select p).Take(20).ToListAsync();
 
-            var response = products.Select(MapToResponse).ToList();
+            var response = await Task.WhenAll(products.Select(MapToResponseAsync));
             return Ok(response);
         }
 
@@ -44,7 +44,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(MapToResponse(productModel));
+            return Ok(await MapToResponseAsync(productModel));
         }
 
         // POST: Product
@@ -82,16 +82,45 @@ namespace backend.Controllers
         }
         // converts the product type into the currents easy response model of our product
         // see Models/ProductResponse.cs
-        private static ProductResponse MapToResponse(Product product)
+        private async Task<ProductResponse> MapToResponseAsync(Product product)
         {
+            string imageUrl = await GenerateImageUrl(product.ProductName ?? "product");
+
             return new ProductResponse
             {
                 Id = product.ProductId,
-                // Product-XXXX
+
                 Name = product.ProductName,
-                // Double between 5.0 and 505.0
-                Price = product.ProductPrice ?? 5.00m
+
+                Price = product.ProductPrice ?? 5.00m,
+                
+                ImageUrl = imageUrl
             };
+        }
+
+        private async Task<string> GenerateImageUrl(string productName)
+        {
+            var url = $"https://api.pexels.com/v1/search?query={Uri.EscapeDataString(productName)}&per_page=1";
+
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Authorization", "VJWCMspXFn1QKt5cqPwTScVFpJsOl35a6x9KRYThPZ8VjPhv6o2trkBv");
+
+            using var response = await new HttpClient().SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using var json = await System.Text.Json.JsonDocument.ParseAsync(stream);
+
+            var photos = json.RootElement.GetProperty("photos");
+            if (photos.GetArrayLength() == 0)
+            {
+                    return "https://images.pexels.com/photos/9582578/pexels-photo-9582578.jpeg?auto=compress&cs=tinysrgb&h=350";
+                }
+
+            return photos[0]
+                .GetProperty("src")
+                .GetProperty("medium")
+                .GetString() ?? "https://images.pexels.com/photos/9582578/pexels-photo-9582578.jpeg?auto=compress&cs=tinysrgb&h=350";
         }
     }
 }
