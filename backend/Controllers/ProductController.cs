@@ -88,9 +88,9 @@ namespace backend.Controllers
             {
                 Id = product.ProductId,
                 // Product-XXXX
-                Name = $"Product-{Random.Shared.Next(1000, 9999)}",
+                Name = product.ProductName,
                 // Double between 5.0 and 505.0
-                Price = decimal.Round((decimal)(Random.Shared.NextDouble() * 500.0 + 5.0), 2)
+                Price = product.ProductPrice ?? 5.00m
             };
         }
     }
