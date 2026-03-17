@@ -37,11 +37,11 @@
 
 .cloud-icon {
   color: red;
-  font-size: 14px;
-  width: 14px;
-  height: 14px;
+  font-size: 15px;
+  width: 13px;
+  height: 13px;
   position: absolute;
-  top: -6px;
+  top: -8px;
   left: 50%;
   transform: translateX(-50%);
 }
