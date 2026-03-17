@@ -20,6 +20,7 @@ services:
     networks:
       - db_network
 
+
   # -----------------------------
   # Frontend (Angular)
   # -----------------------------
@@ -41,30 +42,25 @@ services:
   # Backend (C# .NET)
   # -----------------------------
   backend:
-      build:
-        context: ./backend
-        dockerfile: Dockerfile.backend
-      container_name: b2c_backend
-      ports:
-        - "8080:8080"
-      environment:
-        - ASPNETCORE_ENVIRONMENT=Development
-        - ASPNETCORE_URLS=http://+:8080
-      depends_on:
-        - db
-      networks:
-        - db_network
-        - frontend_network
-      develop:
-        watch:
-          - action: rebuild
-            path: ./backend
-            ignore:
-              - ./backend/bin
-              - ./backend/obj
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    container_name: b2c_backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - /app/bin
+      - /app/obj
+    command: dotnet watch run --no-launch-profile --urls=http://0.0.0.0:8080
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - db
+    networks:
+      - db_network
+      - frontend_network
 
-  
- 
+
 # -----------------------------
 # Volumes
 # -----------------------------
