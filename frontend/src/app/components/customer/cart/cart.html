@@ -24,11 +24,15 @@
           <h3 style="margin-top: 0; color: #333; margin-bottom: 0;">{{ item.name }}</h3>
           <p style="margin: 0;">Price: {{ item.price | number: '1.2-2' }}</p>
         </div>
-        <button (click)="onRemoveFromCart(item)" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 500;">Remove</button>
+        <button
+          (click)="onRemoveFromCart(item)"
+          style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 500;"
+        >
+          Remove
+        </button>
       </div>
     </div>
 
-    <!-- Total row -->
     <div
       style="
         display: flex;
@@ -43,24 +47,110 @@
     </div>
 
     <div style="display: flex; justify-content: flex-end;">
-      <a
-        routerLink="/customer/payment-success"
+      <button
+        type="button"
+        (click)="openCheckoutOptions()"
         style="
           display: inline-flex;
           align-items: center;
           justify-content: center;
           padding: 0.75rem 1.25rem;
           border-radius: 8px;
+          border: none;
           background: #16a34a;
           color: white;
           text-decoration: none;
           font-weight: 600;
+          cursor: pointer;
         "
       >
         Pay
-      </a>
+      </button>
+    </div>
+
+    <div
+      *ngIf="isCheckoutModalOpen"
+      (click)="closeCheckoutOptions()"
+      style="
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        z-index: 1000;
+      "
+    >
+      <div
+        (click)="$event.stopPropagation()"
+        style="
+          width: min(100%, 420px);
+          background: white;
+          border-radius: 16px;
+          padding: 1.5rem;
+          box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+          display: grid;
+          gap: 1rem;
+        "
+      >
+        <div>
+          <h3 style="margin: 0 0 0.5rem; color: #111827;">Continue checkout</h3>
+          <p style="margin: 0; color: #6b7280;">
+            Choose how you would like to complete your purchase.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="goToLogin()"
+          style="
+            padding: 0.9rem 1rem;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #111827;
+            font-weight: 600;
+            cursor: pointer;
+          "
+        >
+          Login
+        </button>
+
+        <button
+          type="button"
+          (click)="goToGuestCheckout()"
+          style="
+            padding: 0.9rem 1rem;
+            border-radius: 10px;
+            border: none;
+            background: #16a34a;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+          "
+        >
+          Purchase as guest
+        </button>
+
+        <button
+          type="button"
+          (click)="closeCheckoutOptions()"
+          style="
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: none;
+            background: #f3f4f6;
+            color: #374151;
+            cursor: pointer;
+          "
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   </div>
+
   <ng-template #emptyCart>
     <p>Your cart is empty.</p>
   </ng-template>
