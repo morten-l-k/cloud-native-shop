@@ -1,25 +1,77 @@
-<section style="display: grid; gap: 1rem;">
-      <h2>Welcome 👋</h2>
-      <p>Browse products, see offers, and manage your cart.</p>
+<section style="display: grid; gap: 1.5rem;">
+      <div>
+        <h2>Most Popular Products</h2>
+        <p>Get inspired by what other people are looking for.</p>
+      </div>
 
-      <div style="display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-        <div style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
-          <h3 style="margin-top: 0;">Featured</h3>
-          <p>Placeholder for featured products.</p>
-        </div>
-
-        <div style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
-          <h3 style="margin-top: 0;">Categories</h3>
-          <p>Placeholder for categories.</p>
-        </div>
-
-        <div style="border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
-          <h3 style="margin-top: 0;">Deals</h3>
-          <p>Placeholder for deals.</p>
-        </div>
+      <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <mat-card *ngFor="let product of featuredProducts$ | async" class="product-card" style="display: flex; flex-direction: column;">
+          <img mat-card-image [src]="product.imageUrl" [alt]="product.name" style="aspect-ratio: 1 / 1; object-fit: cover;">
+          <mat-card-header>
+            <mat-card-title>{{ product.name }}</mat-card-title>
+            <mat-card-subtitle>{{ product.price | currency:'USD' }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-actions style="margin-top: auto; display: flex; gap: 8px; padding: 8px;">
+            <button
+              type="button"
+              [routerLink]="['/customer/products', product.id]"
+              style="
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                background-color: white;
+                color: #333;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+              "
+              onmouseover="this.style.backgroundColor='#f9fafb'"
+              onmouseout="this.style.backgroundColor='white'"
+            >
+              View Product
+            </button>
+          </mat-card-actions>
+        </mat-card>
       </div>
 
       <div>
+        <h2>Most Recent Purchases</h2>
+        <p>Items you or others have recently bought.</p>
+      </div>
+
+      <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <mat-card *ngFor="let product of recentPurchases$ | async" class="product-card" style="display: flex; flex-direction: column;">
+          <img mat-card-image [src]="product.imageUrl" [alt]="product.name" style="aspect-ratio: 1 / 1; object-fit: cover;">
+          <mat-card-header>
+            <mat-card-title>{{ product.name }}</mat-card-title>
+            <mat-card-subtitle>{{ product.price | currency:'USD' }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-actions style="margin-top: auto; display: flex; gap: 8px; padding: 8px;">
+            <button
+              type="button"
+              [routerLink]="['/customer/products', product.id]"
+              style="
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                background-color: white;
+                color: #333;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+              "
+              onmouseover="this.style.backgroundColor='#f9fafb'"
+              onmouseout="this.style.backgroundColor='white'"
+            >
+              View Product
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <div style="margin-top: 1rem;">
         <a routerLink="/customer/products" class="products-button">View All Products</a>
       </div>
     </section>
