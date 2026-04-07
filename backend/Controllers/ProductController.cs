@@ -14,8 +14,7 @@ namespace backend.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ShopContext _context;
-
-        public ProductController(ShopContext context)
+        public ProductController(ShopContext context, IConfiguration configuration)
         {
             _context = context;
         }
