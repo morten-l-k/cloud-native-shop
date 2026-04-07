@@ -14,6 +14,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add HTTP client for fetching product images from Pexels API
+builder.Services.AddHttpClient();
+
 // Add CORS Po
 builder.Services.AddCors(options =>
 {
