@@ -22,7 +22,7 @@
       >
         <div>
           <h3 style="margin-top: 0; color: #333; margin-bottom: 0;">{{ item.name }}</h3>
-          <p style="margin: 0;">Price: {{ item.price | number: '1.2-2' }}</p>
+          <p style="margin: 0;">Price: {{ item.price | currency:'USD' }}</p>
         </div>
         <button
           (click)="onRemoveFromCart(item)"
@@ -43,7 +43,7 @@
         margin-top: 0.5rem;
       "
     >
-      Total: {{ total$ | async | number: '1.2-2' }}
+      Total: {{ total$ | async | currency:'USD' }}
     </div>
 
     <div style="display: flex; justify-content: flex-end;">

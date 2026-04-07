@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { CustomerHomePage } from './components/customer/home/home';
 import { CustomerProductsPage } from './components/customer/products/products';
+import { ProductDetailsPage } from './components/customer/products/product-details';
 import { CustomerCartPage } from './components/customer/cart/cart';
 import { PaymentSuccessPage } from './components/customer/payment/payment';
 import { DummyLoginPage } from './components/customer/dummylogin/dummy-login';
@@ -12,6 +13,7 @@ export const routes: Routes = [
 
   { path: 'customer', component: CustomerHomePage },
   { path: 'customer/products', component: CustomerProductsPage },
+  { path: 'customer/products/:id', component: ProductDetailsPage },
   { path: 'customer/cart', component: CustomerCartPage },
   { path: 'customer/payment-success', component: PaymentSuccessPage },
   { path: 'customer/dummy-login', component: DummyLoginPage },

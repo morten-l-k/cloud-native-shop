@@ -18,4 +18,13 @@ export class ProductService {
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);
   }
+
+  /**
+   * Fetches a single product by its ID from the backend API.
+   * @param id The ID of the product to fetch.
+   * @returns An Observable that emits a single Product object.
+   */
+  getProduct(id: string | number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`);
+  }
 }

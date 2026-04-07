@@ -1,0 +1,41 @@
+<section style="padding: 1rem;">
+  <a routerLink="/customer/products" style="text-decoration: none; color: #2563eb; margin-bottom: 1.5rem; display: inline-block; font-weight: 500;">
+    &larr; Back to all products
+  </a>
+
+  <div *ngIf="product$ | async as product; else loading">
+    <mat-card style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 2rem; padding: 2rem; max-width: 1000px; margin: 0 auto;">
+      
+      <!-- Product Image -->
+      <div style="flex: 1; min-width: 300px;">
+        <img [src]="product.imageUrl" [alt]="product.name" style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px;" />
+      </div>
+
+      <!-- Product Information -->
+      <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column;">
+        <h1 style="margin-top: 0; font-size: 2rem; color: #111;">{{ product.name }}</h1>
+        <h2 style="color: #2563eb; font-size: 1.5rem; margin-top: 0;">{{ product.price | currency:'USD' }}</h2>
+        
+        <p style="color: #555; line-height: 1.6; font-size: 1.1rem; margin: 1.5rem 0; flex-grow: 1;">
+          {{ 'No description available for this product.' }}
+        </p>
+
+        <!-- Add to Cart Action -->
+        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid #eee;">
+          <button type="button" (click)="onAddToCart(product)" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1d4ed8'" onmouseout="this.style.backgroundColor='#2563eb'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            Add to cart
+          </button>
+        </div>
+      </div>
+
+    </mat-card>
+  </div>
+
+  <!-- Loading State -->
+  <ng-template #loading>
+    <p style="text-align: center; color: #666; margin-top: 3rem;">Loading product details...</p>
+  </ng-template>
+</section>

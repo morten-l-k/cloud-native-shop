@@ -1,28 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Product } from '../../../models/product';
 import { CartService } from '../../../services/cart';
 import { ProductService } from '../../../services/product';
 
 @Component({
   standalone: true,
-  selector: 'app-customer-products',
+  selector: 'app-product-details',
   imports: [CommonModule, RouterLink, MatCardModule],
-  templateUrl: './products.html',
+  templateUrl: './product-details.html',
 })
-export class CustomerProductsPage implements OnInit {
-  products$!: Observable<Product[]>;
+export class ProductDetailsPage implements OnInit {
+  product$!: Observable<Product | undefined>;
 
   constructor(
+    private route: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
   ) {}
 
   ngOnInit(): void {
-    this.products$ = this.productService.getProducts();
+    // We read the 'id' parameter from the URL, then fetch the corresponding product
+    this.product$ = this.route.paramMap.pipe(
+      switchMap(params => {
+        const id = params.get('id')!;
+        return this.productService.getProduct(id);
+      })
+    );
   }
 
   onAddToCart(product: Product): void {

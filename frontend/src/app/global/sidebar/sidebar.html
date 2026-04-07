@@ -5,6 +5,6 @@
     class="category-btn"
     type="button"
     *ngFor="let category of categories">
-    {{ category }}
+    {{ formatCategoryName(category.productCategoryNameEnglish) }}
   </button>
 </div>
