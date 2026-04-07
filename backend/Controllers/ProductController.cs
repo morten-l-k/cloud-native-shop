@@ -43,6 +43,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
+            // Converts the Product type into ProductResponse type, removing unnecessary data
             return Ok(await MapToResponseAsync(productModel));
         }
 
@@ -89,7 +90,9 @@ namespace backend.Controllers
             {
                 Id = product.ProductId,
 
-                Name = product.ProductName,
+                Name = product.ProductName ?? "No name available.",
+
+                Description = product.ProductDescription ?? "No description available.",
 
                 Price = product.ProductPrice ?? 5.00m,
                 
