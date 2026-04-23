@@ -24,9 +24,9 @@ Every protected route requires a **JWT Bearer token** (`Authorization: Bearer <t
 
 ```mermaid
 sequenceDiagram
-    participant Client as Client (Customer)
-    participant API
-    participant DB as PostgreSQL
+    participant Client as Frontend
+    participant API as Backend (Auth Controller)
+    participant DB
 
     Client->>API: POST /auth/login/customer { Id, Password }
     API->>DB: SELECT customer WHERE customer_id = Id

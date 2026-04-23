@@ -1,28 +1,69 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
-import { Observable } from 'rxjs';
-import { Product } from '../../../models/product';
+import { BehaviorSubject, switchMap } from 'rxjs';
+import { Product, ProductFilters, ProductPage } from '../../../models/product';
+import { Category } from '../../../models/category';
 import { CartService } from '../../../services/cart';
+import { CategoryService } from '../../../services/category';
 import { ProductService } from '../../../services/product';
 
 @Component({
   standalone: true,
   selector: 'app-customer-products',
-  imports: [CommonModule, RouterLink, MatCardModule],
+  imports: [CommonModule, FormsModule, RouterLink, MatCardModule],
   templateUrl: './products.html',
 })
 export class CustomerProductsPage implements OnInit {
-  products$!: Observable<Product[]>;
+  categories: Category[] = [];
+
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  selectedCategory = '';
+  selectedSort: 'price_asc' | 'price_desc' | '' = '';
+
+  private filters$ = new BehaviorSubject<ProductFilters>({ page: 1 });
+
+  productPage$ = this.filters$.pipe(
+    switchMap(filters => this.productService.getProducts(filters))
+  );
 
   constructor(
     private productService: ProductService,
+    private categoryService: CategoryService,
     private cartService: CartService,
   ) {}
 
   ngOnInit(): void {
-    this.products$ = this.productService.getProducts();
+    this.categoryService.getCategories().subscribe(cats => this.categories = cats);
+  }
+
+  applyFilters(): void {
+    this.filters$.next({
+      page: 1,
+      minPrice: this.minPrice ?? undefined,
+      maxPrice: this.maxPrice ?? undefined,
+      category: this.selectedCategory || undefined,
+      sort: this.selectedSort || undefined,
+    });
+  }
+
+  clearFilters(): void {
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.selectedCategory = '';
+    this.selectedSort = '';
+    this.filters$.next({ page: 1 });
+  }
+
+  prevPage(data: ProductPage): void {
+    if (data.page > 1) this.filters$.next({ ...this.filters$.value, page: data.page - 1 });
+  }
+
+  nextPage(data: ProductPage): void {
+    if (data.page < data.totalPages) this.filters$.next({ ...this.filters$.value, page: data.page + 1 });
   }
 
   onAddToCart(product: Product): void {
