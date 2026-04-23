@@ -1,0 +1,31 @@
+POST http://localhost:8080/auth/login/customer
+  Content-Type: application/json
+
+  {
+    "Id": "b6368ca0f56d4632f44d58ca431487b2",
+    "password": "password"
+  }
+
+### eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNjM2OGNhMGY1NmQ0NjMyZjQ0ZDU4Y2E0MzE0ODdiMiIsImp0aSI6ImY1ZTQ5YzI4LTkwMGItNDQyYy04MTAyLTY4ODU4Yjc1ZTJjZSIsInVzZXJfaWQiOiJiNjM2OGNhMGY1NmQ0NjMyZjQ0ZDU4Y2E0MzE0ODdiMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImN1c3RvbWVyIiwiZXhwIjoxNzc2OTQ2MzE2LCJpc3MiOiJjbG91ZC1uYXRpdmUtc2hvcCIsImF1ZCI6ImNsb3VkLW5hdGl2ZS1zaG9wLWNsaWVudHMifQ.xQBaOqrwhhgOgoBJv_mwcnu2H_TJ8i9NU-gLwzsu9Sk
+####
+
+GET http://localhost:8080/order/me
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNjM2OGNhMGY1NmQ0NjMyZjQ0ZDU4Y2E0MzE0ODdiMiIsImp0aSI6IjdhZThmZGFhLTg4NmEtNDQxMC05ZGE5LTQ2MDVhNmVkMDFhYSIsInVzZXJfaWQiOiJiNjM2OGNhMGY1NmQ0NjMyZjQ0ZDU4Y2E0MzE0ODdiMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImN1c3RvbWVyIiwiZXhwIjoxNzc2OTQ2NTg0LCJpc3MiOiJjbG91ZC1uYXRpdmUtc2hvcCIsImF1ZCI6ImNsb3VkLW5hdGl2ZS1zaG9wLWNsaWVudHMifQ.DnwkDMJXfmCXT1LRcn1Uib8VYvAIaPjFu07yzFwCPd8
+
+
+###
+
+POST http://localhost:8080/order
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNjM2OGNhMGY1NmQ0NjMyZjQ0ZDU4Y2E0MzE0ODdiMiIsImp0aSI6IjdhZThmZGFhLTg4NmEtNDQxMC05ZGE5LTQ2MDVhNmVkMDFhYSIsInVzZXJfaWQiOiJiNjM2OGNhMGY1NmQ0NjMyZjQ0ZDU4Y2E0MzE0ODdiMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImN1c3RvbWVyIiwiZXhwIjoxNzc2OTQ2NTg0LCJpc3MiOiJjbG91ZC1uYXRpdmUtc2hvcCIsImF1ZCI6ImNsb3VkLW5hdGl2ZS1zaG9wLWNsaWVudHMifQ.DnwkDMJXfmCXT1LRcn1Uib8VYvAIaPjFu07yzFwCPd8
+  Content-Type: application/json
+
+  {
+  "items": [
+    {
+      "productId": "1e9e8ef04dbcff4541ed26657ea517e5",
+      "sellerId": "3442f8959a84dea7ee197c632cb2df15",
+      "quantity": 1,
+      "price": 1000
+    }
+  ]
+}

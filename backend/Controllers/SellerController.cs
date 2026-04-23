@@ -7,32 +7,32 @@ namespace backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CustomerController : ControllerBase
+    public class SellerController : ControllerBase
     {
         private readonly ShopContext _context;
 
-        public CustomerController(ShopContext context)
+        public SellerController(ShopContext context)
         {
             _context = context;
         }
 
-        // GET: customer/me
+        // GET: seller/me
         [HttpGet("me")]
-        [Authorize(Roles = "customer")]
+        [Authorize(Roles = "seller")]
         public async Task<IActionResult> Me()
         {
-            var customerId = User.FindFirst("user_id")?.Value;
+            var sellerId = User.FindFirst("user_id")?.Value;
 
-            if (customerId == null)
+            if (sellerId == null)
                 return Unauthorized();
 
-            var customer = await _context.Customer
-                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+            var seller = await _context.Seller
+                .FirstOrDefaultAsync(s => s.SellerId == sellerId);
 
-            if (customer == null)
+            if (seller == null)
                 return NotFound();
 
-            return Ok(customer);
+            return Ok(seller);
         }
     }
 }
