@@ -43,7 +43,6 @@ erDiagram
     order_items {
         serial order_item_id PK
         varchar order_id FK
-        int order_item_quantity
         varchar product_id FK
         varchar seller_id FK
         timestamp shipping_limit_date
