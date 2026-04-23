@@ -18,10 +18,10 @@ namespace backend.Controllers
 
         // GET: customer/me
         [HttpGet("me")]
-        [Authorize]
+        [Authorize(Roles = "customer")]
         public async Task<IActionResult> Me()
         {
-            var customerId = User.FindFirst("customer_id")?.Value;
+            var customerId = User.FindFirst("user_id")?.Value;
 
             if (customerId == null)
                 return Unauthorized();
