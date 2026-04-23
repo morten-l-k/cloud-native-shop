@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS products (
     product_name VARCHAR(100),
     product_category_name VARCHAR(100),
     product_name_length INTEGER,
+    product_description TEXT,
     product_description_length INTEGER,
     product_photos_qty INTEGER,
     product_weight_g INTEGER,

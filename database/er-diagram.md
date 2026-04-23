@@ -72,14 +72,17 @@ erDiagram
     
     products {
         varchar product_id PK
-        varchar product_category_name FK
+        varchar product_name
+        varchar product_category_name
         int product_name_length
+        text product_description
         int product_description_length
         int product_photos_qty
         int product_weight_g
         int product_length_cm
         int product_height_cm
         int product_width_cm
+        decimal product_price
     }
     
     sellers {

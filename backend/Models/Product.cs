@@ -18,7 +18,10 @@ namespace CloudNativeShop.Backend.Models
         
         [Column("product_name_length")]
         public int? ProductNameLength { get; set; }
-        
+
+        [Column("product_description")]
+        public string? ProductDescription { get; set; }
+
         [Column("product_description_length")]
         public int? ProductDescriptionLength { get; set; }
         
