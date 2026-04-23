@@ -8,7 +8,7 @@
 
 -- Customer indexes
 \echo 'Creating customer indexes...'
-CREATE INDEX idx_customer_unique_id ON customers(customer_unique_id);
+CREATE INDEX idx_customer_password ON customers(password);
 CREATE INDEX idx_customer_zip ON customers(customer_zip_code_prefix);
 CREATE INDEX idx_customer_state ON customers(customer_state);
 

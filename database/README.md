@@ -14,9 +14,9 @@ This directory contains SQL scripts to initialize the PostgreSQL database with B
 ## Strategy
 
 **Loading data BEFORE constraints** provides:
-- ✅ Faster bulk loading (no FK validation during insert)
-- ✅ Avoids constraint violation issues during import
-- ✅ More reliable initialization process
+- Faster bulk loading (no FK validation during insert)
+- Avoids constraint violation issues during import
+- More reliable initialization process
 
 ## Automatic Initialization
 
