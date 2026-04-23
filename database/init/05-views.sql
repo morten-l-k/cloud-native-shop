@@ -11,7 +11,6 @@
 CREATE VIEW customer_order_stats AS
 SELECT 
     c.customer_id,
-    c.customer_unique_id,
     c.customer_city,
     c.customer_state,
     COUNT(DISTINCT o.order_id) AS total_orders,
@@ -22,7 +21,7 @@ SELECT
 FROM customers c
 LEFT JOIN orders o ON c.customer_id = o.customer_id
 LEFT JOIN order_items oi ON o.order_id = oi.order_id
-GROUP BY c.customer_id, c.customer_unique_id, c.customer_city, c.customer_state;
+GROUP BY c.customer_id, c.customer_city, c.customer_state;
 
 -- Product performance
 \echo 'Creating product_performance view...'

@@ -24,7 +24,7 @@ namespace backend.Controllers
 
         public record LoginRequest(string Id, string Password);
         public record LoginResponse(string Token, string Id, string Role);
-        public record RegisterCustomerRequest(string Id, string Password, string CustomerZipCodePrefix, string CustomerCity, string CustomerState);
+        public record RegisterCustomerRequest(string Id, string Password, string CustomerZipCodePrefix, string CustomerCity, string CustomerState, string FirstName, string LastName, string EmailAddress, string StreetAddress);
         public record RegisterSellerRequest(string Id, string Password, string SellerZipCodePrefix, string SellerCity, string SellerState);
 
         // POST: auth/login/customer
@@ -106,11 +106,14 @@ namespace backend.Controllers
             var customer = new Customer
             {
                 CustomerId = request.Id,
-                CustomerUniqueId = request.Password,
+                CustomerPassword = request.Password,
                 CustomerZipCodePrefix = request.CustomerZipCodePrefix,
                 CustomerCity = request.CustomerCity,
-                CustomerState = request.CustomerState
-
+                CustomerState = request.CustomerState,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                EmailAddress = request.EmailAddress,
+                StreetAddress = request.StreetAddress
             };
 
             _context.Customer.Add(customer);

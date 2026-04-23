@@ -10,10 +10,14 @@ CREATE TABLE IF NOT EXISTS product_category_translation (
 -- Customers table (olist_customers_dataset.csv)
 CREATE TABLE IF NOT EXISTS customers (
     customer_id VARCHAR(64) PRIMARY KEY,
-    customer_unique_id VARCHAR(64) NOT NULL,
+    password VARCHAR(256),
     customer_zip_code_prefix VARCHAR(10),
     customer_city VARCHAR(100),
-    customer_state VARCHAR(2)
+    customer_state VARCHAR(2),
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    email_address VARCHAR(255),
+    street_address VARCHAR(255)
 );
 
 -- Geolocation table (olist_geolocation_dataset.csv)
