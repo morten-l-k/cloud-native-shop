@@ -22,6 +22,8 @@ But here are still some more examples:
 
 Every protected route requires a **JWT Bearer token** (`Authorization: Bearer <token>`). Tokens encode `user_id` and `role` (`customer` or `seller`) and expire after 60 minutes.
 
+Here is a Sequence Diagram showing first the authentification of a customer, where he receives a JWT (works the same for a seller):
+
 ```mermaid
 sequenceDiagram
     participant Client as Frontend
@@ -31,7 +33,17 @@ sequenceDiagram
     Client->>API: POST /auth/login/customer { Id, Password }
     API->>DB: SELECT customer WHERE customer_id = Id
     DB-->>API: Customer row or null
+    API->>API: Generate JWT (user_id, role, exp)
     API-->>Client: 200 { Token, Id, Role } or 401
+```
+
+And here how a client can retrieve the already taken orders using the JWT:
+
+```mermaid
+sequenceDiagram
+    participant Client as Frontend
+    participant API as Backend (Auth Controller)
+    participant DB
 
     Client->>API: GET /order/me  Authorization: Bearer <token>
     API->>API: Validate JWT
@@ -39,6 +51,9 @@ sequenceDiagram
     DB-->>API: Orders
     API-->>Client: 200 [orders] or 401
 ```
+
+
+
 
 ### JWT Claims
 
