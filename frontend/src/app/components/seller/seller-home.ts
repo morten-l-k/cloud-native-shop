@@ -27,13 +27,9 @@ import { AuthService } from '../../services/auth';
 
       <ng-template #notLoggedIn>
         <p style="margin: 0; color: #6b7280;">
-          This is a dummy seller screen. Login is not protected yet.
+          ...Welcome Seller :^)
         </p>
       </ng-template>
-
-      <p style="margin: 0; color: #6b7280;">
-        Later this page can show seller orders, products, and account details.
-      </p>
 
       <button
         type="button"
