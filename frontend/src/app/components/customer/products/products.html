@@ -1,9 +1,61 @@
-<section style="display: grid; gap: 1rem;">
+<section style="display: grid; gap: 1.5rem;">
   <h2>All Products</h2>
 
-  <div *ngIf="products$ | async as products; else loading">
+  <!-- Filter bar -->
+  <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+
+    <!-- Category -->
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <label style="font-size: 0.8rem; font-weight: 500; color: #555;">Category</label>
+      <select [(ngModel)]="selectedCategory" style="padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; min-width: 160px;">
+        <option value="">All categories</option>
+        <option *ngFor="let cat of categories" [value]="cat.productCategoryName">
+          {{ cat.productCategoryNameEnglish }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Min price -->
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <label style="font-size: 0.8rem; font-weight: 500; color: #555;">Min price</label>
+      <input type="number" [(ngModel)]="minPrice" placeholder="0" min="0"
+        style="padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; width: 100px;" />
+    </div>
+
+    <!-- Max price -->
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <label style="font-size: 0.8rem; font-weight: 500; color: #555;">Max price</label>
+      <input type="number" [(ngModel)]="maxPrice" placeholder="Any" min="0"
+        style="padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; width: 100px;" />
+    </div>
+
+    <!-- Sort -->
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <label style="font-size: 0.8rem; font-weight: 500; color: #555;">Sort by</label>
+      <select [(ngModel)]="selectedSort" style="padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+        <option value="">Default</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+      </select>
+    </div>
+
+    <!-- Buttons -->
+    <div style="display: flex; gap: 8px;">
+      <button type="button" (click)="applyFilters()"
+        style="padding: 8px 20px; border: none; border-radius: 6px; background-color: #2563eb; color: white; font-weight: 500; cursor: pointer;">
+        Apply
+      </button>
+      <button type="button" (click)="clearFilters()"
+        style="padding: 8px 16px; border: 1px solid #ccc; border-radius: 6px; background-color: white; color: #333; font-weight: 500; cursor: pointer;">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Product grid -->
+  <div *ngIf="productPage$ | async as data; else loadingTpl">
     <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-      <mat-card *ngFor="let product of products" class="product-card" style="display: flex; flex-direction: column;">
+      <mat-card *ngFor="let product of data.items" class="product-card" style="display: flex; flex-direction: column;">
         <img mat-card-image [src]="product.imageUrl" [alt]="product.name" style="aspect-ratio: 1 / 1; object-fit: cover;" />
         <mat-card-header>
           <mat-card-title>{{ product.name }}</mat-card-title>
@@ -14,17 +66,7 @@
           <button
             type="button"
             [routerLink]="['/customer/products', product.id]"
-            style="
-              flex: 1;
-              padding: 8px 12px;
-              border: 1px solid #ccc;
-              border-radius: 6px;
-              background-color: white;
-              color: #333;
-              font-weight: 500;
-              cursor: pointer;
-              transition: background-color 0.2s ease;
-            "
+            style="flex: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; background-color: white; color: #333; font-weight: 500; cursor: pointer;"
             onmouseover="this.style.backgroundColor='#f9fafb'"
             onmouseout="this.style.backgroundColor='white'"
           >
@@ -33,21 +75,7 @@
           <button
             type="button"
             (click)="onAddToCart(product)"
-            style="
-              flex: 2;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 6px;
-              padding: 8px 12px;
-              border: none;
-              border-radius: 6px;
-              background-color: #2563eb;
-              color: white;
-              font-weight: 500;
-              cursor: pointer;
-              transition: background-color 0.2s ease;
-            "
+            style="flex: 2; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border: none; border-radius: 6px; background-color: #2563eb; color: white; font-weight: 500; cursor: pointer;"
             onmouseover="this.style.backgroundColor='#1d4ed8'"
             onmouseout="this.style.backgroundColor='#2563eb'"
           >
@@ -57,13 +85,30 @@
             Add to cart
           </button>
         </mat-card-actions>
-
       </mat-card>
     </div>
-    <p *ngIf="products.length === 0">No products found.</p>
+
+    <p *ngIf="data.items.length === 0">No products found.</p>
+
+    <!-- Pagination -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 2rem;">
+      <button type="button" (click)="prevPage(data)" [disabled]="data.page <= 1"
+        [style.opacity]="data.page <= 1 ? '0.4' : '1'"
+        [style.cursor]="data.page <= 1 ? 'not-allowed' : 'pointer'"
+        style="padding: 8px 20px; border: 1px solid #ccc; border-radius: 6px; background-color: white; color: #333; font-weight: 500;">
+        &larr; Prev
+      </button>
+      <span style="font-size: 0.95rem; color: #555;">Page {{ data.page }} of {{ data.totalPages }}</span>
+      <button type="button" (click)="nextPage(data)" [disabled]="data.page >= data.totalPages"
+        [style.opacity]="data.page >= data.totalPages ? '0.4' : '1'"
+        [style.cursor]="data.page >= data.totalPages ? 'not-allowed' : 'pointer'"
+        style="padding: 8px 20px; border: 1px solid #ccc; border-radius: 6px; background-color: white; color: #333; font-weight: 500;">
+        Next &rarr;
+      </button>
+    </div>
   </div>
 
-  <ng-template #loading>
+  <ng-template #loadingTpl>
     <p>Loading products...</p>
   </ng-template>
 </section>

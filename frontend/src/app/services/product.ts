@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Product } from '../models/product';
+import { Product, ProductFilters, ProductPage } from '../models/product';
 
 @Injectable({
   providedIn: 'root',
@@ -11,19 +11,15 @@ export class ProductService {
 
   constructor(private http: HttpClient) { }
 
-  /**
-   * Fetches a list of products from the backend API.
-   * @returns An Observable that emits an array of Product objects.
-   */
-  getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrl);
+  getProducts(filters: ProductFilters = {}): Observable<ProductPage> {
+    let params = new HttpParams().set('page', filters.page ?? 1);
+    if (filters.minPrice != null) params = params.set('minPrice', filters.minPrice);
+    if (filters.maxPrice != null) params = params.set('maxPrice', filters.maxPrice);
+    if (filters.category)         params = params.set('category', filters.category);
+    if (filters.sort)             params = params.set('sort', filters.sort);
+    return this.http.get<ProductPage>(this.apiUrl, { params });
   }
 
-  /**
-   * Fetches a single product by its ID from the backend API.
-   * @param id The ID of the product to fetch.
-   * @returns An Observable that emits a single Product object.
-   */
   getProduct(id: string | number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }

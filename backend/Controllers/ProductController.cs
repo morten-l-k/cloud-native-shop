@@ -19,15 +19,47 @@ namespace backend.Controllers
             _context = context;
         }
 
-        // GET: Product
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            var products = await (from p in _context.Product
-                                  select p).Take(20).ToListAsync();
+        public record ProductPageResponse(ProductResponse[] Items, int Page, int PageSize, int TotalCount, int TotalPages);
 
-            var response = await Task.WhenAll(products.Select(MapToResponseAsync));
-            return Ok(response);
+        // GET: Product?page=1&minPrice=10&maxPrice=100&category=electronics&sort=price_asc
+        [HttpGet]
+        public async Task<IActionResult> Index(
+            [FromQuery] int page = 1,
+            [FromQuery] decimal? minPrice = null,
+            [FromQuery] decimal? maxPrice = null,
+            [FromQuery] string? category = null,
+            [FromQuery] string? sort = null)
+        {
+            const int pageSize = 10;
+            page = Math.Max(1, page);
+
+            var query = _context.Product.AsQueryable();
+
+            if (minPrice.HasValue)
+                query = query.Where(p => p.ProductPrice >= minPrice.Value);
+            if (maxPrice.HasValue)
+                query = query.Where(p => p.ProductPrice <= maxPrice.Value);
+            if (!string.IsNullOrWhiteSpace(category))
+                query = query.Where(p => p.ProductCategoryName == category);
+
+            query = sort switch
+            {
+                "price_asc"  => query.OrderBy(p => p.ProductPrice),
+                "price_desc" => query.OrderByDescending(p => p.ProductPrice),
+                _            => query
+            };
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            var products = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var items = await Task.WhenAll(products.Select(MapToResponseAsync));
+
+            return Ok(new ProductPageResponse(items, page, pageSize, totalCount, totalPages));
         }
 
         // GET: Product/{id}

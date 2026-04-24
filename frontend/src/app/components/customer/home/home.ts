@@ -22,8 +22,8 @@ export class CustomerHomePage implements OnInit {
   ngOnInit(): void {
     // We use shareReplay(1) so the HTTP request is only triggered once, 
     // even though we use the async pipe twice in the template.
-    const products$ = this.productService.getProducts().pipe(shareReplay(1));
-    
+    const products$ = this.productService.getProducts({ page: 1 }).pipe(map(p => p.items), shareReplay(1));
+
     this.featuredProducts$ = products$.pipe(map(products => products.slice(0, 4)));
     this.recentPurchases$ = products$.pipe(map(products => products.slice(4, 8)));
   }
