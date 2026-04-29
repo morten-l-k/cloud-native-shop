@@ -6,6 +6,7 @@ import { CustomerCartPage } from './components/customer/cart/cart';
 import { PaymentSuccessPage } from './components/customer/payment/payment';
 import { DummyLoginPage } from './components/customer/dummylogin/dummy-login';
 import { SellerPage } from './components/seller/seller-home';
+import { SellerLoginPage } from './components/seller/seller-login';
 import { AdminPage } from './components/admin/admin-home';
 
 export const routes: Routes = [
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'customer/payment-success', component: PaymentSuccessPage },
   { path: 'customer/dummy-login', component: DummyLoginPage },
   { path: 'seller', component: SellerPage },
+  { path: 'seller/login', component: SellerLoginPage },
   { path: 'admin', component: AdminPage },
 
   { path: '**', redirectTo: 'customer' }
