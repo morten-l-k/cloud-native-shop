@@ -36,5 +36,8 @@ namespace CloudNativeShop.Backend.Models
         [JsonIgnore]
         [ForeignKey("OrderId")]
         public Order Order { get; set; } = null!;
+
+        [ForeignKey("ProductId")]
+        public Product? Product { get; set; }
     }
 }

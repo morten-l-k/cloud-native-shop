@@ -84,7 +84,7 @@ namespace backend.Controllers
         }
 
         // GET: order/seller  (seller only)
-        // Returns all orders that contain at least one item from the logged-in seller.
+        // Returns a summary of all orders that contain at least one item from the logged-in seller.
         [HttpGet("seller")]
         [Authorize(Roles = "seller")]
         public async Task<IActionResult> SellerOrders()
@@ -94,10 +94,40 @@ namespace backend.Controllers
 
             var orders = await _context.Order
                 .Where(o => o.OrderItems.Any(i => i.SellerId == sellerId))
-                .Include(o => o.OrderItems.Where(i => i.SellerId == sellerId))
+                .Select(o => new
+                {
+                    o.OrderId,
+                    o.OrderStatus,
+                    o.OrderPurchaseTimestamp,
+                    o.OrderEstimatedDeliveryDate,
+                    ItemCount = o.OrderItems.Count(i => i.SellerId == sellerId),
+                    TotalValue = o.OrderItems
+                        .Where(i => i.SellerId == sellerId)
+                        .Sum(i => i.Price * i.OrderItemQuantity ?? 0)
+                })
                 .ToListAsync();
 
             return Ok(orders);
+        }
+
+        // GET: order/seller/{orderId}  (seller only)
+        // Returns full details of a specific order including items and product info, filtered to the seller's items.
+        [HttpGet("seller/{orderId}")]
+        [Authorize(Roles = "seller")]
+        public async Task<IActionResult> SellerOrderDetail(string orderId)
+        {
+            var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
+
+            var order = await _context.Order
+                .Where(o => o.OrderId == orderId && o.OrderItems.Any(i => i.SellerId == sellerId))
+                .Include(o => o.OrderItems.Where(i => i.SellerId == sellerId))
+                    .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync();
+
+            if (order == null) return NotFound();
+
+            return Ok(order);
         }
     }
 }
