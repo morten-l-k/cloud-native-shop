@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 export interface LoginResponse {
-  Token: string;
-  Id: string;
-  Role: 'customer' | 'seller';
+  token: string;
+  id: string;
+  role: 'customer' | 'seller';
 }
 
 @Injectable({
@@ -41,8 +41,8 @@ export class AuthService {
   }
 
   private saveLogin(response: LoginResponse): void {
-    localStorage.setItem('token', response.Token);
-    localStorage.setItem('userId', response.Id);
-    localStorage.setItem('role', response.Role);
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('userId', response.id);
+    localStorage.setItem('role', response.role);
   }
 }
