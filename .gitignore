@@ -75,6 +75,7 @@ artifacts/
 *.runtimeconfig.json
 *.staticwebassets.* 
 gemini.md
+*.agents
 .agents/
 skills-lock.json
 
