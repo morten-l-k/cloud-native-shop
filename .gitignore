@@ -75,7 +75,8 @@ artifacts/
 *.runtimeconfig.json
 *.staticwebassets.* 
 gemini.md
-*.agents
+.agents/
+skills-lock.json
 
 # macOS
 .DS_Store
