@@ -64,6 +64,7 @@ GET  /product               public
 GET  /product/{id}          public
 GET  /category              public
 POST /payment               customer only
+POST /shipment              customer only
 ```
 
 ---
@@ -222,8 +223,49 @@ Content-Type: application/json
 |---|---|
 | `"created"` | `POST /order` |
 | `"paid"` | `POST /payment` |
+| `"shipped"` | `POST /shipment` |
 
 ---
+
+## Shipment Flow
+
+**POST /shipment** — mock shipment endpoint. Looks up the order by `OrderId`, verifies it belongs to the authenticated customer and is in `"paid"` status, then sets `OrderStatus = "shipped"` and `OrderDeliveredCarrierDate = now`.
+
+```mermaid
+sequenceDiagram
+    participant Client as Frontend
+    participant API as Backend (Shipment Controller)
+    participant DB
+
+    Client->>API: POST /shipment { OrderId } + Bearer token
+    API->>DB: SELECT order WHERE order_id = OrderId AND customer_id = customerId
+    DB-->>API: Order row or null
+    API->>DB: UPDATE order SET order_status = "shipped", order_delivered_carrier_date = now
+    DB-->>API: OK
+    API-->>Client: 200 "shipment in process"
+```
+
+### POST /shipment
+
+```http
+POST /shipment
+Authorization: Bearer eyJhbGci...
+Content-Type: application/json
+
+{ "OrderId": "a1b2c3d4-..." }
+```
+
+```json
+// 200 OK
+"shipment in process"
+
+// 400 — "Order must be paid before it can be shipped."
+// 404 — "Order not found." (wrong ID or belongs to another customer)
+// 401 — invalid/missing token (empty body)
+```
+
+---
+
 
 ## Products & Categories
 
