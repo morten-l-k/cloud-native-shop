@@ -20,15 +20,20 @@ erDiagram
     products ||--o{ order_items : "included in"
     sellers ||--o{ order_items : "sells"
     product_category_translation ||--o{ products : "categorizes"
-    
+
     customers {
         varchar customer_id PK
         varchar customer_unique_id
+        varchar password
+        varchar first_name
+        varchar last_name
+        varchar email_address
+        varchar street_address
         varchar customer_zip_code_prefix
         varchar customer_city
         varchar customer_state
     }
-    
+
     orders {
         varchar order_id PK
         varchar customer_id FK
@@ -39,17 +44,18 @@ erDiagram
         timestamp order_delivered_customer_date
         timestamp order_estimated_delivery_date
     }
-    
+
     order_items {
         serial order_item_id PK
         varchar order_id FK
+        int order_item_quantity
         varchar product_id FK
         varchar seller_id FK
         timestamp shipping_limit_date
         decimal price
         decimal freight_value
     }
-    
+
     order_payments {
         serial payment_id PK
         varchar order_id FK
@@ -58,7 +64,7 @@ erDiagram
         int payment_installments
         decimal payment_value
     }
-    
+
     order_reviews {
         varchar review_id PK
         varchar order_id FK
@@ -68,34 +74,31 @@ erDiagram
         timestamp review_creation_date
         timestamp review_answer_timestamp
     }
-    
+
     products {
         varchar product_id PK
         varchar product_name
-        varchar product_category_name
-        int product_name_length
+        varchar product_category_name FK
         text product_description
-        int product_description_length
-        int product_photos_qty
         int product_weight_g
         int product_length_cm
         int product_height_cm
         int product_width_cm
         decimal product_price
     }
-    
+
     sellers {
         varchar seller_id PK
         varchar seller_zip_code_prefix
         varchar seller_city
         varchar seller_state
     }
-    
+
     product_category_translation {
         varchar product_category_name PK
         varchar product_category_name_english
     }
-    
+
     geolocation {
         serial geolocation_id PK
         varchar geolocation_zip_code_prefix
@@ -116,3 +119,12 @@ erDiagram
 - **sellers** → **order_items**: Each seller fulfills zero or many order items
 - **product_category_translation** → **products**: Each category contains zero or many products
 - **geolocation**: Used for geographic lookups via zip code prefix (no direct foreign key)
+
+## Changes from Original Olist Dataset
+
+| Change | Reason |
+|---|---|
+| `products`: dropped `product_name_length`, `product_description_length` | Derived data — computable from the description/name fields themselves |
+| `products`: dropped `product_photos_qty` | Not needed for the shop's core functionality |
+| `customers`: added `password`, `first_name`, `last_name`, `email_address`, `street_address` | Required for user authentication and profile management |
+| `order_items`: renamed `order_item_id` column (originally a sequence number per order) to auto-increment surrogate PK; added `order_item_quantity` | Cleaner PK; quantity was not tracked in the original dataset |
