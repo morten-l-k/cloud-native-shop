@@ -126,6 +126,8 @@ namespace backend.Controllers
 
                 Description = product.ProductDescription ?? "No description available.",
 
+                Category = product.ProductCategoryName,
+
                 Price = product.ProductPrice ?? 5.00m,
                 
                 ImageUrl = imageUrl
