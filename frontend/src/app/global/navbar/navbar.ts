@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CartService } from '../../services/cart';
+import { AuthService } from '../../services/auth';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,15 +14,23 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./navbar.css']
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  cartItemCount = 0;
-  private cartSubscription!: Subscription;
+  private cartService = inject(CartService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(private cartService: CartService) {}
+  cartItemCount = 0;
+  user$ = this.authService.currentUser$;
+  private cartSubscription!: Subscription;
 
   ngOnInit() {
     this.cartSubscription = this.cartService.getCart().subscribe(items => {
       this.cartItemCount = items.length;
     });
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/customer']);
   }
 
   ngOnDestroy() {
