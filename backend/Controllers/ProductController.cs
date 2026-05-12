@@ -21,14 +21,15 @@ namespace backend.Controllers
 
         public record ProductPageResponse(ProductResponse[] Items, int Page, int PageSize, int TotalCount, int TotalPages);
 
-        // GET: Product?page=1&minPrice=10&maxPrice=100&category=electronics&sort=price_asc
+        // GET: Product?page=1&minPrice=10&maxPrice=100&category=electronics&sort=price_asc&search=shirt
         [HttpGet]
         public async Task<IActionResult> Index(
             [FromQuery] int page = 1,
             [FromQuery] decimal? minPrice = null,
             [FromQuery] decimal? maxPrice = null,
             [FromQuery] string? category = null,
-            [FromQuery] string? sort = null)
+            [FromQuery] string? sort = null,
+            [FromQuery] string? search = null)
         {
             const int pageSize = 10;
             page = Math.Max(1, page);
@@ -41,6 +42,8 @@ namespace backend.Controllers
                 query = query.Where(p => p.ProductPrice <= maxPrice.Value);
             if (!string.IsNullOrWhiteSpace(category))
                 query = query.Where(p => p.ProductCategoryName == category);
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(p => p.ProductName != null && p.ProductName.ToLower().Contains(search.ToLower()));
 
             query = sort switch
             {

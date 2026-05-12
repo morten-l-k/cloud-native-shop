@@ -7,12 +7,14 @@
     </a>
   </div>
 
-  <div class="search-box" aria-label="Search placeholder">
+  <div class="search-box" aria-label="Search products">
     <mat-icon class="search-icon">search</mat-icon>
     <input
       type="text"
       placeholder="Search products..."
       aria-label="Search products"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearch()"
     />
   </div>
 

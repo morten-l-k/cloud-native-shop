@@ -17,6 +17,7 @@ export class ProductService {
     if (filters.maxPrice != null) params = params.set('maxPrice', filters.maxPrice);
     if (filters.category)         params = params.set('category', filters.category);
     if (filters.sort)             params = params.set('sort', filters.sort);
+    if (filters.search)           params = params.set('search', filters.search);
     return this.http.get<ProductPage>(this.apiUrl, { params });
   }
 
