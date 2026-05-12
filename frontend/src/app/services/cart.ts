@@ -1,30 +1,45 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Product } from '../models/product';
+import { CartItem, Product } from '../models/product';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private items: Product[] = [];
-  private cart = new BehaviorSubject<Product[]>([]);
+  private items: CartItem[] = [];
+  private cart = new BehaviorSubject<CartItem[]>([]);
 
-  constructor() {}
-
-  getCart(): Observable<Product[]> {
+  getCart(): Observable<CartItem[]> {
     return this.cart.asObservable();
   }
 
-  addToCart(product: Product) {
-    this.items.push(product);
-    this.cart.next(this.items);
+  addToCart(product: Product, quantity: number = 1): boolean {
+    const existing = this.items.find(i => i.product.id === product.id);
+    const currentQty = existing?.quantity ?? 0;
+    if (currentQty + quantity > product.stock) return false;
+
+    if (existing) {
+      existing.quantity += quantity;
+    } else {
+      this.items.push({ product, quantity });
+    }
+    this.cart.next([...this.items]);
+    return true;
   }
 
-  removeFromCart(product: Product) {
-    const index = this.items.findIndex(item => item.id === product.id);
-    if (index > -1) {
-      this.items.splice(index, 1);
-      this.cart.next([...this.items]);
+  updateQuantity(productId: string, quantity: number): void {
+    const item = this.items.find(i => i.product.id === productId);
+    if (!item) return;
+    if (quantity <= 0) {
+      this.items = this.items.filter(i => i.product.id !== productId);
+    } else {
+      item.quantity = quantity;
     }
+    this.cart.next([...this.items]);
+  }
+
+  removeFromCart(productId: string): void {
+    this.items = this.items.filter(i => i.product.id !== productId);
+    this.cart.next([...this.items]);
   }
 }
