@@ -26,13 +26,18 @@
     <span>Cart</span>
   </a>
 
-  <a routerLink="/customer/dummy-login" class="nav-button">
+  <a routerLink="/customer/dummy-login" class="nav-button" *ngIf="!(user$ | async)">
     <mat-icon>person</mat-icon>
     <span>Customer Login</span>
   </a>
 
-  <a routerLink="/seller/login" class="nav-button">
+  <a routerLink="/seller/login" class="nav-button" *ngIf="!(user$ | async)">
     <mat-icon>store</mat-icon>
     <span>Seller Login</span>
   </a>
+
+  <button class="nav-button" (click)="logout()" *ngIf="user$ | async" style="background: none; border: none; cursor: pointer; font: inherit; color: inherit; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
+    <mat-icon>logout</mat-icon>
+    <span>Logout</span>
+  </button>
 </nav>

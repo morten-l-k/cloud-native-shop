@@ -1,26 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Product } from '../../../models/product';
 import { CartService } from '../../../services/cart';
+import { AuthService } from '../../../services/auth';
 import { map } from 'rxjs/operators';
 
 @Component({
   standalone: true,
   selector: 'app-customer-cart',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './cart.html'
 })
 export class CustomerCartPage implements OnInit {
+  private cartService = inject(CartService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   cartItems$!: Observable<Product[]>;
   total$!: Observable<number>;
   isCheckoutModalOpen = false;
-
-  constructor(
-    private cartService: CartService,
-    private router: Router
-  ) {}
 
   ngOnInit() {
     this.cartItems$ = this.cartService.getCart();
@@ -34,6 +34,10 @@ export class CustomerCartPage implements OnInit {
   }
 
   openCheckoutOptions() {
+    if (this.authService.getRole() === 'customer') {
+      this.processPayment();
+      return;
+    }
     this.isCheckoutModalOpen = true;
   }
 
@@ -41,7 +45,7 @@ export class CustomerCartPage implements OnInit {
     this.isCheckoutModalOpen = false;
   }
 
-  goToGuestCheckout() {
+  processPayment() {
     this.closeCheckoutOptions();
     this.router.navigate(['/customer/payment-success']);
   }
