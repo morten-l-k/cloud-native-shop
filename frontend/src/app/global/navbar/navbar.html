@@ -26,18 +26,44 @@
     <span>Cart</span>
   </a>
 
-  <a routerLink="/customer/dummy-login" class="nav-button" *ngIf="!(user$ | async)">
-    <mat-icon>person</mat-icon>
-    <span>Customer Login</span>
-  </a>
-
-  <a routerLink="/seller/login" class="nav-button" *ngIf="!(user$ | async)">
-    <mat-icon>store</mat-icon>
-    <span>Seller Login</span>
-  </a>
-
-  <button class="nav-button" (click)="logout()" *ngIf="user$ | async" style="background: none; border: none; cursor: pointer; font: inherit; color: inherit; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
-    <mat-icon>logout</mat-icon>
-    <span>Logout</span>
-  </button>
+  <div class="login-dropdown-wrapper">
+    <ng-container *ngIf="user$ | async as user; else notLoggedIn">
+      <button class="nav-button dropdown-trigger">
+        <mat-icon>account_circle</mat-icon>
+        <span>{{ user.role | titlecase }}</span>
+        <mat-icon class="chevron">expand_more</mat-icon>
+      </button>
+      <div class="dropdown-menu">
+        <a *ngIf="user.role === 'customer'" routerLink="/customer/cart" class="dropdown-item">
+          <mat-icon>receipt_long</mat-icon>
+          <span>My Orders</span>
+        </a>
+        <a *ngIf="user.role === 'seller'" routerLink="/seller" class="dropdown-item">
+          <mat-icon>dashboard</mat-icon>
+          <span>Orders Dashboard</span>
+        </a>
+        <button class="dropdown-item" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Log out</span>
+        </button>
+      </div>
+    </ng-container>
+    <ng-template #notLoggedIn>
+      <button class="nav-button dropdown-trigger">
+        <mat-icon>person</mat-icon>
+        <span>Login</span>
+        <mat-icon class="chevron">expand_more</mat-icon>
+      </button>
+      <div class="dropdown-menu">
+        <a routerLink="/customer/dummy-login" class="dropdown-item">
+          <mat-icon>person</mat-icon>
+          <span>Log in as Customer</span>
+        </a>
+        <a routerLink="/seller/login" class="dropdown-item">
+          <mat-icon>store</mat-icon>
+          <span>Log in as Seller</span>
+        </a>
+      </div>
+    </ng-template>
+  </div>
 </nav>
