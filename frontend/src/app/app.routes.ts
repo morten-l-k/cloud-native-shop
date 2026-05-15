@@ -4,7 +4,7 @@ import { CustomerProductsPage } from './components/customer/products/products';
 import { ProductDetailsPage } from './components/customer/products/product-details';
 import { CustomerCartPage } from './components/customer/cart/cart';
 import { PaymentSuccessPage } from './components/customer/payment/payment';
-import { DummyLoginPage } from './components/customer/dummylogin/dummy-login';
+import { CustomerLoginPage } from './components/customer/login/login';
 import { CustomerOrdersDashboardPage } from './components/customer/orders/orders';
 import { SellerLoginPage } from './components/seller/login/login';
 import { SellerDashboardPage } from './components/seller/dashboard/dashboard';
@@ -18,7 +18,7 @@ export const routes: Routes = [
   { path: 'customer/products/:id', component: ProductDetailsPage },
   { path: 'customer/cart', component: CustomerCartPage },
   { path: 'customer/payment-success', component: PaymentSuccessPage },
-  { path: 'customer/dummy-login', component: DummyLoginPage },
+  { path: 'customer/login', component: CustomerLoginPage },
   { path: 'customer/orders', component: CustomerOrdersDashboardPage },
   { path: 'seller', component: SellerDashboardPage },
   { path: 'seller/login', component: SellerLoginPage },
