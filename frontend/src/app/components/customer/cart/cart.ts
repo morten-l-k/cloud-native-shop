@@ -70,6 +70,6 @@ export class CustomerCartPage implements OnInit {
 
   goToLogin() {
     this.closeCheckoutOptions();
-    this.router.navigate(['/customer/dummy-login']);
+    this.router.navigate(['/customer/login']);
   }
 }

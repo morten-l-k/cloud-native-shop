@@ -7,7 +7,7 @@ import { finalize } from 'rxjs';
 
 @Component({
   standalone: true,
-  selector: 'app-dummy-login',
+  selector: 'app-login',
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <section
@@ -71,7 +71,7 @@ import { finalize } from 'rxjs';
     </section>
   `
 })
-export class DummyLoginPage {
+export class CustomerLoginPage {
   customerId = '';
   password = 'password';
   errorMessage = '';
