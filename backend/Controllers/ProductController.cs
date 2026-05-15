@@ -130,7 +130,9 @@ namespace backend.Controllers
 
                 Price = product.ProductPrice ?? 5.00m,
                 
-                ImageUrl = imageUrl
+                ImageUrl = imageUrl,
+
+                Stock = product.ProductStock ?? 0
             };
         }
 

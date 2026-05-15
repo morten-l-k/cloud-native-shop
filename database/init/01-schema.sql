@@ -40,7 +40,8 @@ CREATE TABLE IF NOT EXISTS products (
     product_length_cm INTEGER,
     product_height_cm INTEGER,
     product_width_cm INTEGER,
-    product_price DECIMAL(10,2)
+    product_price DECIMAL(10,2),
+    product_stock INTEGER NOT NULL DEFAULT 0
 );
 
 -- Sellers table (olist_sellers_dataset.csv)

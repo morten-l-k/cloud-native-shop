@@ -9,5 +9,6 @@ namespace CloudNativeShop.Backend.Models
         public string? Category { get; set; } = null;
         public decimal Price { get; set; } = 0m;
         public string ImageUrl { get; set; } = "https://images.pexels.com/photos/9582578/pexels-photo-9582578.jpeg?auto=compress&cs=tinysrgb&h=350";
+        public int Stock { get; set; } = 0;
     }
 }

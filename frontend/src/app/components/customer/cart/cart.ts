@@ -1,16 +1,17 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Product } from '../../../models/product';
+import { map } from 'rxjs/operators';
+import { CartItem } from '../../../models/product';
 import { CartService } from '../../../services/cart';
 import { AuthService } from '../../../services/auth';
-import { map } from 'rxjs/operators';
 
 @Component({
   standalone: true,
   selector: 'app-customer-cart',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './cart.html'
 })
 export class CustomerCartPage implements OnInit {
@@ -18,19 +19,36 @@ export class CustomerCartPage implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  cartItems$!: Observable<Product[]>;
+  cartItems$!: Observable<CartItem[]>;
   total$!: Observable<number>;
   isCheckoutModalOpen = false;
 
   ngOnInit() {
     this.cartItems$ = this.cartService.getCart();
     this.total$ = this.cartItems$.pipe(
-      map(items => items.reduce((acc, item) => acc + item.price, 0))
+      map(items => items.reduce((acc, i) => acc + i.product.price * i.quantity, 0))
     );
   }
 
-  onRemoveFromCart(product: Product) {
-    this.cartService.removeFromCart(product);
+  onRemove(productId: string) {
+    this.cartService.removeFromCart(productId);
+  }
+
+  onDecrement(item: CartItem) {
+    this.cartService.updateQuantity(item.product.id, item.quantity - 1);
+  }
+
+  onIncrement(item: CartItem) {
+    this.cartService.updateQuantity(item.product.id, item.quantity + 1);
+  }
+
+  onQuantityInput(item: CartItem, value: string) {
+    const qty = parseInt(value, 10);
+    if (!isNaN(qty)) this.cartService.updateQuantity(item.product.id, qty);
+  }
+
+  hasStockIssue(items: CartItem[]): boolean {
+    return items.some(i => i.quantity > i.product.stock);
   }
 
   openCheckoutOptions() {

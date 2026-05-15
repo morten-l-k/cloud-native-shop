@@ -66,7 +66,14 @@ export class CustomerProductsPage implements OnInit {
     if (data.page < data.totalPages) this.filters$.next({ ...this.filters$.value, page: data.page + 1 });
   }
 
+  stockWarnings = new Set<string>();
+
   onAddToCart(product: Product): void {
-    this.cartService.addToCart(product);
+    const added = this.cartService.addToCart(product);
+    if (added) {
+      this.stockWarnings.delete(product.id);
+    } else {
+      this.stockWarnings.add(product.id);
+    }
   }
 }

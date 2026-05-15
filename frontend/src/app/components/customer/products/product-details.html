@@ -15,19 +15,45 @@
       <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column;">
         <h1 style="margin-top: 0; font-size: 2rem; color: #111;">{{ product.name }}</h1>
         <h2 style="color: #2563eb; font-size: 1.5rem; margin-top: 0;">{{ product.price | currency:'USD' }}</h2>
+        <p style="margin: 0 0 0.5rem; font-size: 0.9rem;" [style.color]="product.stock > 0 ? '#16a34a' : '#dc2626'">
+          {{ product.stock > 0 ? ('In stock: ' + product.stock) : 'Out of stock' }}
+        </p>
         
         <p style="color: #555; line-height: 1.6; font-size: 1.1rem; margin: 1.5rem 0; flex-grow: 1;">
           {{ product.description }}
         </p>
 
         <!-- Add to Cart Action -->
-        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid #eee;">
-          <button type="button" (click)="onAddToCart(product)" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#1d4ed8'" onmouseout="this.style.backgroundColor='#2563eb'">
+        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 0.75rem;">
+          <!-- Quantity picker -->
+          <div *ngIf="product.stock > 0" style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-weight: 500; color: #555;">Quantity:</span>
+            <button type="button" (click)="decrement()"
+              [disabled]="quantity <= 1" [style.opacity]="quantity <= 1 ? '0.4' : '1'" [style.cursor]="quantity <= 1 ? 'not-allowed' : 'pointer'"
+              style="width: 32px; height: 32px; border: 1px solid #ccc; border-radius: 6px; background: white; font-size: 1.1rem; cursor: pointer;">−</button>
+            <input type="number" [(ngModel)]="quantity" min="1" [max]="product.stock"
+              style="width: 56px; text-align: center; border: 1px solid #ccc; border-radius: 6px; padding: 4px; font-size: 1rem;" />
+            <button type="button" (click)="increment(product.stock)"
+              [disabled]="quantity >= product.stock" [style.opacity]="quantity >= product.stock ? '0.4' : '1'" [style.cursor]="quantity >= product.stock ? 'not-allowed' : 'pointer'"
+              style="width: 32px; height: 32px; border: 1px solid #ccc; border-radius: 6px; background: white; font-size: 1.1rem; cursor: pointer;">+</button>
+          </div>
+
+          <button
+            type="button"
+            (click)="onAddToCart(product)"
+            [disabled]="product.stock === 0"
+            [style.backgroundColor]="product.stock === 0 ? '#9ca3af' : '#2563eb'"
+            [style.cursor]="product.stock === 0 ? 'not-allowed' : 'pointer'"
+            style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 600;"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
               <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
             </svg>
-            Add to cart
+            {{ product.stock === 0 ? 'Out of Stock' : 'Add to cart' }}
           </button>
+          <p *ngIf="stockWarning" style="color: #dc2626; font-size: 0.9rem; margin: 0; text-align: center;">
+            Not enough stock available.
+          </p>
         </div>
       </div>
 

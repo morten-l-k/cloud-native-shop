@@ -33,5 +33,8 @@ namespace CloudNativeShop.Backend.Models
 
         [Column("product_price")]
         public decimal? ProductPrice { get; set; }
+
+        [Column("product_stock")]
+        public int? ProductStock { get; set; }
     }
 }

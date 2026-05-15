@@ -1,4 +1,5 @@
 using backend.Data;
+using backend.Services;
 using CloudNativeShop.Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace backend.Controllers
     public class OrderController : ControllerBase
     {
         private readonly ShopContext _context;
+        private readonly StockService _stockService;
 
-        public OrderController(ShopContext context)
+        public OrderController(ShopContext context, StockService stockService)
         {
             _context = context;
+            _stockService = stockService;
         }
 
         public record PlaceOrderItem(string ProductId, string SellerId, int Quantity, decimal Price);
@@ -43,6 +46,17 @@ namespace backend.Controllers
             if (missingProduct != null)
                 return BadRequest($"Product '{missingProduct.ProductId}' not found.");
 
+            await using var tx = await _context.Database.BeginTransactionAsync();
+
+            foreach (var item in request.Items)
+            {
+                if (!await _stockService.CheckAndDecrementAsync(item.ProductId, item.Quantity))
+                {
+                    await tx.RollbackAsync();
+                    return Conflict($"Insufficient stock for product '{item.ProductId}'.");
+                }
+            }
+
             var order = new Order
             {
                 OrderId = Guid.NewGuid().ToString(),
@@ -62,6 +76,7 @@ namespace backend.Controllers
 
             _context.Order.Add(order);
             await _context.SaveChangesAsync();
+            await tx.CommitAsync();
 
             return CreatedAtAction(nameof(MyOrders), new { }, order);
         }
