@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -24,15 +24,15 @@ import { finalize } from 'rxjs';
     >
       <h2 style="margin: 0;">Customer login</h2>
       <p style="margin: 0; color: #6b7280;">
-        For now, use a customer ID and the password <strong>password</strong>.
+        Use your email and the password <strong>password</strong>.
       </p>
 
       <label style="display: grid; gap: 0.4rem;">
-        <span>Customer ID</span>
+        <span>Email</span>
         <input
-          [(ngModel)]="customerId"
-          type="text"
-          placeholder="06b8999e2fba1a1fbc88172c00ba8bc7"
+          [(ngModel)]="email"
+          type="email"
+          placeholder="customer@example.com"
           style="padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 8px;"
         />
       </label>
@@ -72,32 +72,39 @@ import { finalize } from 'rxjs';
   `
 })
 export class CustomerLoginPage {
-  customerId = '';
+  email = '';
   password = 'password';
   errorMessage = '';
   isLoading = false;
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   onLogin() {
     this.errorMessage = '';
 
-    if (!this.customerId.trim() || !this.password.trim()) {
-      this.errorMessage = 'Please enter both customer ID and password.';
+    if (!this.email.trim() || !this.password.trim()) {
+      this.errorMessage = 'Please enter both email and password.';
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim())) {
+      this.errorMessage = 'Please enter a valid email address.';
       return;
     }
 
     this.isLoading = true;
     this.authService
-      .loginCustomer(this.customerId.trim(), this.password)
-      .pipe(finalize(() => (this.isLoading = false)))
+      .loginCustomer(this.email.trim(), this.password)
+      .pipe(finalize(() => { this.isLoading = false; this.cdr.markForCheck(); }))
       .subscribe({
         next: () => void this.router.navigate(['/customer/cart']),
         error: () => {
-          this.errorMessage = 'Login failed. Check the customer ID and password.';
+          this.errorMessage = 'Login failed. Check the email and password.';
+          this.cdr.markForCheck();
         },
       });
   }
