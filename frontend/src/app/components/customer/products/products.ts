@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { Product, ProductFilters, ProductPage } from '../../../models/product';
@@ -23,6 +23,7 @@ export class CustomerProductsPage implements OnInit {
   maxPrice: number | null = null;
   selectedCategory = '';
   selectedSort: 'price_asc' | 'price_desc' | '' = '';
+  searchQuery = '';
 
   private filters$ = new BehaviorSubject<ProductFilters>({ page: 1 });
 
@@ -34,10 +35,17 @@ export class CustomerProductsPage implements OnInit {
     private productService: ProductService,
     private categoryService: CategoryService,
     private cartService: CartService,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe(cats => this.categories = cats);
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchQuery = params['search'];
+        this.filters$.next({ page: 1, search: this.searchQuery });
+      }
+    });
   }
 
   applyFilters(): void {
@@ -47,6 +55,7 @@ export class CustomerProductsPage implements OnInit {
       maxPrice: this.maxPrice ?? undefined,
       category: this.selectedCategory || undefined,
       sort: this.selectedSort || undefined,
+      search: this.searchQuery.trim() || undefined,
     });
   }
 
@@ -55,6 +64,7 @@ export class CustomerProductsPage implements OnInit {
     this.maxPrice = null;
     this.selectedCategory = '';
     this.selectedSort = '';
+    this.searchQuery = '';
     this.filters$.next({ page: 1 });
   }
 

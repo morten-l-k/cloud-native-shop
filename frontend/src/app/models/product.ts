@@ -18,6 +18,7 @@ export interface ProductFilters {
   maxPrice?: number;
   category?: string;
   sort?: 'price_asc' | 'price_desc' | '';
+  search?: string;
 }
 
 export interface ProductPage {

@@ -4,6 +4,14 @@
   <!-- Filter bar -->
   <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; padding: 16px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
 
+    <!-- Search -->
+    <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 200px;">
+      <label style="font-size: 0.8rem; font-weight: 500; color: #555;">Search</label>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Search products..."
+        (keyup.enter)="applyFilters()"
+        style="padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;" />
+    </div>
+
     <!-- Category -->
     <div style="display: flex; flex-direction: column; gap: 4px;">
       <label style="font-size: 0.8rem; font-weight: 500; color: #555;">Category</label>
