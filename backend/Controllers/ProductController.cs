@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CloudNativeShop.Backend.Models;
 using backend.Data;
+using backend.Services;
 
 namespace backend.Controllers
 {
@@ -14,12 +16,70 @@ namespace backend.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ShopContext _context;
-        public ProductController(ShopContext context, IConfiguration configuration)
+        private readonly StockService _stockService;
+        private readonly PriceService _priceService;
+        public ProductController(ShopContext context, IConfiguration configuration, StockService stockService, PriceService priceService)
         {
             _context = context;
+            _stockService = stockService;
+            _priceService = priceService;
         }
 
         public record ProductPageResponse(ProductResponse[] Items, int Page, int PageSize, int TotalCount, int TotalPages);
+
+        // GET: product/seller  (seller only)
+        // Returns all products belonging to this seller, with sales stats from order history.
+        [HttpGet("seller")]
+        [Authorize(Roles = "seller")]
+        public async Task<IActionResult> SellerProducts()
+        {
+            var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
+
+            var products = await _context.Product
+                .Where(p => p.SellerId == sellerId)
+                .ToListAsync();
+
+            var productIds = products.Select(p => p.ProductId).ToHashSet();
+
+            var soldStats = await _context.OrderItem
+                .Where(i => productIds.Contains(i.ProductId))
+                .GroupBy(i => i.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    TotalSold = g.Sum(i => i.OrderItemQuantity ?? 0),
+                    TotalRevenue = g.Sum(i => (i.Price ?? 0m) * (i.OrderItemQuantity ?? 0))
+                })
+                .ToListAsync();
+
+            var statsMap = soldStats.ToDictionary(s => s.ProductId);
+
+            var categoryNames = products
+                .Select(p => p.ProductCategoryName)
+                .Where(c => c != null)
+                .Distinct()
+                .ToList();
+
+            var categoryMap = await _context.Category
+                .Where(c => categoryNames.Contains(c.ProductCategoryName))
+                .ToDictionaryAsync(c => c.ProductCategoryName, c => c.ProductCategoryNameEnglish);
+
+            var result = products.Select(p => new
+            {
+                p.ProductId,
+                ProductName = p.ProductName ?? "Unknown",
+                p.ProductCategoryName,
+                ProductCategoryNameEnglish = p.ProductCategoryName != null && categoryMap.TryGetValue(p.ProductCategoryName, out var eng) ? eng : null,
+                p.ProductDescription,
+                ProductPrice = p.ProductPrice ?? 0m,
+                ProductStock = p.ProductStock ?? 0,
+                TotalSold = statsMap.TryGetValue(p.ProductId, out var s) ? s.TotalSold : 0,
+                TotalRevenue = statsMap.TryGetValue(p.ProductId, out var r) ? r.TotalRevenue : 0m,
+            });
+
+            return Ok(result);
+        }
 
         // GET: Product?page=1&minPrice=10&maxPrice=100&category=electronics&sort=price_asc&search=shirt
         [HttpGet]
@@ -82,19 +142,84 @@ namespace backend.Controllers
             return Ok(await MapToResponseAsync(productModel));
         }
 
-        // POST: Product
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Product productModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        public record CreateProductRequest(
+            string Name,
+            string? Category,
+            string? Description,
+            decimal Price,
+            int Stock
+        );
 
-            _context.Add(productModel);
+        // POST: Product  (seller only)
+        [HttpPost]
+        [Authorize(Roles = "seller")]
+        public async Task<IActionResult> Create([FromBody] CreateProductRequest req)
+        {
+            var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
+
+            var product = new Product
+            {
+                ProductId = Guid.NewGuid().ToString("N"),
+                ProductName = req.Name,
+                ProductCategoryName = req.Category,
+                ProductDescription = req.Description,
+                ProductPrice = req.Price,
+                ProductStock = req.Stock,
+                SellerId = sellerId
+            };
+
+            _context.Product.Add(product);
             await _context.SaveChangesAsync();
-            
-            return CreatedAtAction(nameof(Details), new { id = productModel.ProductId }, productModel);
+
+            return CreatedAtAction(nameof(Details), new { id = product.ProductId }, new
+            {
+                product.ProductId,
+                ProductName = product.ProductName,
+                product.ProductCategoryName,
+                ProductPrice = product.ProductPrice ?? 0m,
+                ProductStock = product.ProductStock ?? 0
+            });
+        }
+
+        public record UpdateProductRequest(
+            string Name,
+            string? Category,
+            string? Description,
+            decimal Price,
+            int Stock
+        );
+
+        // PUT: Product/{id}  (seller only, must own the product)
+        [HttpPut("{id}")]
+        [Authorize(Roles = "seller")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateProductRequest req)
+        {
+            var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
+
+            var product = await _context.Product.FirstOrDefaultAsync(p => p.ProductId == id);
+            if (product == null) return NotFound();
+            if (product.SellerId != sellerId) return Forbid();
+
+            product.ProductName = req.Name;
+            product.ProductCategoryName = req.Category;
+            product.ProductDescription = req.Description;
+
+            await _context.SaveChangesAsync();
+            await _stockService.SetStockAsync(id, sellerId, req.Stock);
+            await _priceService.SetPriceAsync(id, sellerId, req.Price);
+
+            return Ok(new
+            {
+                product.ProductId,
+                ProductName = product.ProductName,
+                product.ProductCategoryName,
+                ProductPrice = req.Price,
+                ProductStock = req.Stock,
+                TotalSold = 0,
+                TotalRevenue = 0m,
+            });
         }
 
         // DELETE: Product/{id}
