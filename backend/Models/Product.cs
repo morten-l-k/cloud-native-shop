@@ -39,5 +39,8 @@ namespace CloudNativeShop.Backend.Models
 
         [Column("seller_id")]
         public string? SellerId { get; set; }
+
+        [Column("is_active")]
+        public bool IsActive { get; set; } = true;
     }
 }

@@ -74,6 +74,7 @@ namespace backend.Controllers
                 p.ProductDescription,
                 ProductPrice = p.ProductPrice ?? 0m,
                 ProductStock = p.ProductStock ?? 0,
+                p.IsActive,
                 TotalSold = statsMap.TryGetValue(p.ProductId, out var s) ? s.TotalSold : 0,
                 TotalRevenue = statsMap.TryGetValue(p.ProductId, out var r) ? r.TotalRevenue : 0m,
             });
@@ -94,7 +95,7 @@ namespace backend.Controllers
             const int pageSize = 10;
             page = Math.Max(1, page);
 
-            var query = _context.Product.AsQueryable();
+            var query = _context.Product.Where(p => p.IsActive).AsQueryable();
 
             if (minPrice.HasValue)
                 query = query.Where(p => p.ProductPrice >= minPrice.Value);
@@ -222,22 +223,21 @@ namespace backend.Controllers
             });
         }
 
-        // DELETE: Product/{id}
+        // DELETE: Product/{id}  (seller only, must own the product — soft-delists rather than hard-deletes)
         [HttpDelete("{id}")]
+        [Authorize(Roles = "seller")]
         public async Task<IActionResult> Delete(string id)
         {
-            var productModel = await (from p in _context.Product
-                          where p.ProductId == id
-                          select p).FirstOrDefaultAsync();
-            
-            if (productModel == null)
-            {
-                return NotFound();
-            }
+            var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
 
-            _context.Product.Remove(productModel);
+            var product = await _context.Product.FirstOrDefaultAsync(p => p.ProductId == id);
+            if (product == null) return NotFound();
+            if (product.SellerId != sellerId) return Forbid();
+
+            product.IsActive = false;
             await _context.SaveChangesAsync();
-            
+
             return NoContent();
         }
         // converts the product type into the currents easy response model of our product

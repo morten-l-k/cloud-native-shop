@@ -295,6 +295,22 @@ constructor(
     });
   }
 
+  delistProduct(product: SellerProduct): void {
+    if (!confirm(`Delist "${product.productName}"? It will no longer appear in the storefront but order history is preserved.`)) return;
+    this.sellerService.deleteProduct(product.productId).subscribe({
+      next: () => {
+        this.products = this.products.map(p =>
+          p.productId === product.productId ? { ...p, isActive: false } : p
+        );
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Delist failed', err);
+        alert('Failed to delist product.');
+      }
+    });
+  }
+
   openOrderDetail(orderId: string): void {
     this.dialog.open(OrderDetailDialog, {
       data: orderId,

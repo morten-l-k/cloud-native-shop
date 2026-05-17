@@ -235,8 +235,12 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let p">
-                <button mat-icon-button matTooltip="Edit product" (click)="openProductForm(p)">
+                <span *ngIf="!p.isActive" class="delisted-badge">Delisted</span>
+                <button mat-icon-button matTooltip="Edit product" (click)="openProductForm(p)" [disabled]="!p.isActive">
                   <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" matTooltip="Delist product" (click)="delistProduct(p)" [disabled]="!p.isActive">
+                  <mat-icon>remove_shopping_cart</mat-icon>
                 </button>
               </td>
             </ng-container>

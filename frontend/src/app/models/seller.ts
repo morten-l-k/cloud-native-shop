@@ -45,6 +45,7 @@ export interface SellerProduct {
   productStock: number;
   totalSold: number;
   totalRevenue: number;
+  isActive: boolean;
 }
 
 

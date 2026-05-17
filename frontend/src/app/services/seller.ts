@@ -40,6 +40,10 @@ export class SellerService {
     return this.http.get<{ productCategoryName: string; productCategoryNameEnglish: string | null }[]>('/api/category');
   }
 
+  deleteProduct(id: string): Observable<void> {
+    return this.http.delete<void>(`/api/product/${id}`);
+  }
+
   getAnalytics(): Observable<SellerAnalytics> {
     return this.http.get<SellerAnalytics>(`${this.orderApiUrl}/seller/analytics`);
   }
