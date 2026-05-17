@@ -16,7 +16,7 @@
 
 -- 3. Products (independent in this phase)
 \echo '[3/9] Loading products (~33k rows)...'
-\COPY products FROM '/data/olist_products_dataset.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"', NULL '');
+\COPY products(product_id, product_name, product_category_name, product_description, product_weight_g, product_length_cm, product_height_cm, product_width_cm, product_price, product_stock, seller_id) FROM '/data/olist_products_dataset.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"', NULL '');
 
 -- 4. Sellers (independent)
 \echo '[4/9] Loading sellers (~3k rows)...'
@@ -32,7 +32,7 @@
 
 -- 7. Order items (independent in this phase)
 \echo '[7/9] Loading order_items (~113k rows)...'
-\COPY order_items(order_id, order_item_quantity, product_id, seller_id, shipping_limit_date, price, freight_value) FROM '/data/olist_order_items_dataset.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', QUOTE '"', NULL '');
+\COPY order_items(order_id, order_item_quantity, product_id, shipping_limit_date, price, freight_value) FROM '/data/olist_order_items_dataset.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', NULL '');
 
 -- 8. Order payments (independent in this phase)
 \echo '[8/9] Loading order_payments (~104k rows)...'
