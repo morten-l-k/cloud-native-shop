@@ -20,7 +20,7 @@ namespace backend.Controllers
             _stockService = stockService;
         }
 
-        public record PlaceOrderItem(string ProductId, string SellerId, int Quantity, decimal Price);
+        public record PlaceOrderItem(string ProductId, int Quantity, decimal Price);
         public record PlaceOrderRequest(List<PlaceOrderItem> Items);
 
         // POST: order  (customer only)
@@ -67,7 +67,6 @@ namespace backend.Controllers
                 OrderItems = request.Items.Select(i => new OrderItem
                 {
                     ProductId = i.ProductId,
-                    SellerId = i.SellerId,
                     OrderItemQuantity = i.Quantity,
                     Price = i.Price,
                     FreightValue = 0
@@ -108,21 +107,71 @@ namespace backend.Controllers
             if (sellerId == null) return Unauthorized();
 
             var orders = await _context.Order
-                .Where(o => o.OrderItems.Any(i => i.SellerId == sellerId))
+                .Where(o => o.OrderItems.Any(i => i.Product!.SellerId == sellerId))
                 .Select(o => new
                 {
                     o.OrderId,
                     o.OrderStatus,
                     o.OrderPurchaseTimestamp,
                     o.OrderEstimatedDeliveryDate,
-                    ItemCount = o.OrderItems.Count(i => i.SellerId == sellerId),
+                    ItemCount = o.OrderItems.Count(i => i.Product!.SellerId == sellerId),
                     TotalValue = o.OrderItems
-                        .Where(i => i.SellerId == sellerId)
+                        .Where(i => i.Product!.SellerId == sellerId)
                         .Sum(i => i.Price * i.OrderItemQuantity ?? 0)
                 })
                 .ToListAsync();
 
             return Ok(orders);
+        }
+
+        // GET: order/seller/analytics  (seller only)
+        // Returns aggregated revenue and order stats for the logged-in seller.
+        [HttpGet("seller/analytics")]
+        [Authorize(Roles = "seller")]
+        public async Task<IActionResult> SellerAnalytics()
+        {
+            var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
+
+            var items = await _context.OrderItem
+                .Where(i => i.Product!.SellerId == sellerId)
+                .Include(i => i.Order)
+                .ToListAsync();
+
+            var totalRevenue = items.Sum(i => (i.Price ?? 0m) * (i.OrderItemQuantity ?? 0));
+            var totalOrders = items.Select(i => i.OrderId).Distinct().Count();
+            var avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0m;
+
+            var monthlyRevenue = items
+                .Where(i => i.Order.OrderPurchaseTimestamp.HasValue)
+                .GroupBy(i => new { i.Order.OrderPurchaseTimestamp!.Value.Year, i.Order.OrderPurchaseTimestamp!.Value.Month })
+                .Select(g => new
+                {
+                    Month = $"{g.Key.Year}-{g.Key.Month:D2}",
+                    Revenue = g.Sum(i => (i.Price ?? 0m) * (i.OrderItemQuantity ?? 0)),
+                    OrderCount = g.Select(i => i.OrderId).Distinct().Count()
+                })
+                .OrderBy(m => m.Month)
+                .TakeLast(6)
+                .ToList();
+
+            var statusBreakdown = items
+                .GroupBy(i => i.Order.OrderStatus ?? "unknown")
+                .Select(g => new
+                {
+                    Status = g.Key,
+                    Count = g.Select(i => i.OrderId).Distinct().Count()
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                TotalRevenue = totalRevenue,
+                TotalOrders = totalOrders,
+                AvgOrderValue = avgOrderValue,
+                MonthlyRevenue = monthlyRevenue,
+                StatusBreakdown = statusBreakdown
+            });
         }
 
         // GET: order/seller/{orderId}  (seller only)
@@ -135,14 +184,44 @@ namespace backend.Controllers
             if (sellerId == null) return Unauthorized();
 
             var order = await _context.Order
-                .Where(o => o.OrderId == orderId && o.OrderItems.Any(i => i.SellerId == sellerId))
-                .Include(o => o.OrderItems.Where(i => i.SellerId == sellerId))
+                .Where(o => o.OrderId == orderId && o.OrderItems.Any(i => i.Product!.SellerId == sellerId))
+                .Include(o => o.OrderItems.Where(i => i.Product!.SellerId == sellerId))
                     .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync();
 
             if (order == null) return NotFound();
 
-            return Ok(order);
+            var categoryNames = order.OrderItems
+                .Select(i => i.Product?.ProductCategoryName)
+                .Where(c => c != null)
+                .Distinct()
+                .ToList();
+
+            var categoryMap = await _context.Category
+                .Where(c => categoryNames.Contains(c.ProductCategoryName))
+                .ToDictionaryAsync(c => c.ProductCategoryName, c => c.ProductCategoryNameEnglish);
+
+            return Ok(new
+            {
+                order.OrderId,
+                order.OrderStatus,
+                order.OrderPurchaseTimestamp,
+                order.OrderEstimatedDeliveryDate,
+                OrderItems = order.OrderItems.Select(i => new
+                {
+                    i.ProductId,
+                    i.OrderItemQuantity,
+                    i.Price,
+                    i.FreightValue,
+                    Product = i.Product == null ? null : new
+                    {
+                        i.Product.ProductName,
+                        i.Product.ProductCategoryName,
+                        ProductCategoryNameEnglish = i.Product.ProductCategoryName != null && categoryMap.TryGetValue(i.Product.ProductCategoryName, out var eng) ? eng : null,
+                        i.Product.ProductPrice,
+                    }
+                })
+            });
         }
     }
 }
