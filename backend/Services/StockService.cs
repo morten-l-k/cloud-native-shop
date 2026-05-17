@@ -20,5 +20,13 @@ namespace backend.Services
                     s.SetProperty(p => p.ProductStock, p => p.ProductStock - quantity));
             return rows > 0;
         }
+
+        public async Task<bool> SetStockAsync(string productId, string sellerId, int newStock)
+        {
+            int rows = await context.Product
+                .Where(p => p.ProductId == productId && p.SellerId == sellerId)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.ProductStock, newStock));
+            return rows > 0;
+        }
     }
 }
