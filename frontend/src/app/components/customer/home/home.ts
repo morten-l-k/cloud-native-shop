@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { Product } from '../../../models/product';
 import { ProductService } from '../../../services/product';
+import { CartService } from '../../../services/cart';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
@@ -17,7 +18,18 @@ export class CustomerHomePage implements OnInit {
   featuredProducts$!: Observable<Product[]>;
   recentPurchases$!: Observable<Product[]>;
 
-  constructor(private productService: ProductService) {}
+  stockWarnings = new Set<string>();
+
+  constructor(private productService: ProductService, private cartService: CartService) {}
+
+  onAddToCart(product: Product): void {
+    const added = this.cartService.addToCart(product);
+    if (added) {
+      this.stockWarnings.delete(product.id);
+    } else {
+      this.stockWarnings.add(product.id);
+    }
+  }
 
   ngOnInit(): void {
     // We use shareReplay(1) so the HTTP request is only triggered once, 

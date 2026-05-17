@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Seller, SellerOrderSummary, SellerOrderDetail } from '../models/seller';
+import { Seller, SellerOrderSummary, SellerOrderDetail, SellerProduct, SellerAnalytics } from '../models/seller';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +22,25 @@ export class SellerService {
 
   getOrderDetail(orderId: string): Observable<SellerOrderDetail> {
     return this.http.get<SellerOrderDetail>(`${this.orderApiUrl}/seller/${orderId}`);
+  }
+
+  getProducts(): Observable<SellerProduct[]> {
+    return this.http.get<SellerProduct[]>('/api/product/seller');
+  }
+
+  createProduct(data: { name: string; category: string; description: string; price: number; stock: number }): Observable<SellerProduct> {
+    return this.http.post<SellerProduct>('/api/product', data);
+  }
+
+  updateProduct(id: string, data: { name: string; category: string; description: string; price: number; stock: number }): Observable<SellerProduct> {
+    return this.http.put<SellerProduct>(`/api/product/${id}`, data);
+  }
+
+  getCategories(): Observable<{ productCategoryName: string; productCategoryNameEnglish: string | null }[]> {
+    return this.http.get<{ productCategoryName: string; productCategoryNameEnglish: string | null }[]>('/api/category');
+  }
+
+  getAnalytics(): Observable<SellerAnalytics> {
+    return this.http.get<SellerAnalytics>(`${this.orderApiUrl}/seller/analytics`);
   }
 }

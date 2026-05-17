@@ -19,6 +19,7 @@ export interface SellerOrderItem {
   product: {
     productName: string;
     productCategoryName: string;
+    productCategoryNameEnglish: string | null;
     productPrice: number;
   };
   orderItemQuantity: number;
@@ -32,4 +33,31 @@ export interface SellerOrderDetail {
   orderPurchaseTimestamp: string;
   orderEstimatedDeliveryDate: string;
   orderItems: SellerOrderItem[];
+}
+
+export interface SellerProduct {
+  productId: string;
+  productName: string;
+  productCategoryName: string | null;
+  productCategoryNameEnglish: string | null;
+  productDescription: string | null;
+  productPrice: number;
+  productStock: number;
+  totalSold: number;
+  totalRevenue: number;
+}
+
+
+export interface MonthlyRevenue {
+  month: string;
+  revenue: number;
+  orderCount: number;
+}
+
+export interface SellerAnalytics {
+  totalRevenue: number;
+  totalOrders: number;
+  avgOrderValue: number;
+  monthlyRevenue: MonthlyRevenue[];
+  statusBreakdown: { status: string; count: number }[];
 }
