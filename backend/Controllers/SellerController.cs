@@ -7,32 +7,20 @@ namespace backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SellerController : ControllerBase
+    public class SellerController(ShopContext context) : ControllerBase
     {
-        private readonly ShopContext _context;
-
-        public SellerController(ShopContext context)
-        {
-            _context = context;
-        }
-
         // GET: seller/me
         [HttpGet("me")]
         [Authorize(Roles = "seller")]
         public async Task<IActionResult> Me()
         {
             var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
 
-            if (sellerId == null)
-                return Unauthorized();
-
-            var seller = await _context.Seller
+            var seller = await context.Seller
                 .FirstOrDefaultAsync(s => s.SellerId == sellerId);
 
-            if (seller == null)
-                return NotFound();
-
-            return Ok(seller);
+            return seller == null ? NotFound() : Ok(seller);
         }
     }
 }
