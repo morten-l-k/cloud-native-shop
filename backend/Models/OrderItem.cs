@@ -21,9 +21,6 @@ namespace CloudNativeShop.Backend.Models
         [Column("product_id")]
         public string ProductId { get; set; } = string.Empty;
 
-        [Column("seller_id")]
-        public string SellerId { get; set; } = string.Empty;
-
         [Column("shipping_limit_date")]
         public DateTime? ShippingLimitDate { get; set; }
 

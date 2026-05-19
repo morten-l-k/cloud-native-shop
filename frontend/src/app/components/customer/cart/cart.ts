@@ -1,12 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CartItem } from '../../../models/product';
 import { CartService } from '../../../services/cart';
 import { AuthService } from '../../../services/auth';
+import { OrderService } from '../../../services/order';
 
 @Component({
   standalone: true,
@@ -17,11 +18,14 @@ import { AuthService } from '../../../services/auth';
 export class CustomerCartPage implements OnInit {
   private cartService = inject(CartService);
   private authService = inject(AuthService);
+  private orderService = inject(OrderService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   cartItems$!: Observable<CartItem[]>;
   total$!: Observable<number>;
-  isCheckoutModalOpen = false;
+  isLoading = false;
+  errorMessage: string | null = null;
 
   ngOnInit() {
     this.cartItems$ = this.cartService.getCart();
@@ -54,22 +58,32 @@ export class CustomerCartPage implements OnInit {
   openCheckoutOptions() {
     if (this.authService.getRole() === 'customer') {
       this.processPayment();
-      return;
+    } else {
+      void this.router.navigate(['/customer/dummy-login']);
     }
-    this.isCheckoutModalOpen = true;
   }
 
-  closeCheckoutOptions() {
-    this.isCheckoutModalOpen = false;
-  }
+  async processPayment() {
+    this.isLoading = true;
+    this.errorMessage = null;
 
-  processPayment() {
-    this.closeCheckoutOptions();
-    this.router.navigate(['/customer/payment-success']);
-  }
+    try {
+      const items = await firstValueFrom(this.cartService.getCart());
+      const orderItems = items.map(i => ({
+        ProductId: i.product.id,
+        Quantity: i.quantity,
+        Price: i.product.price,
+      }));
+      const order = await firstValueFrom(this.orderService.placeOrder(orderItems));
+      await firstValueFrom(this.orderService.payOrder(order.orderId));
 
-  goToLogin() {
-    this.closeCheckoutOptions();
-    this.router.navigate(['/customer/dummy-login']);
+      this.cartService.clearCart();
+      void this.router.navigateByUrl('/customer/payment-success');
+    } catch (err: any) {
+      this.errorMessage = typeof err?.error === 'string' ? err.error : 'Checkout failed. Please try again.';
+    } finally {
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    }
   }
 }
