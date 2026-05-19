@@ -1,0 +1,71 @@
+<div class="dashboard-container">
+  <section class="orders-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>My Orders</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="sortedOrders" class="orders-table">
+
+          <ng-container matColumnDef="orderId">
+            <th mat-header-cell *matHeaderCellDef class="sortable-header" (click)="sortBy('orderId')">
+              Order ID
+              <mat-icon class="sort-icon" *ngIf="sortColumn === 'orderId'">{{ sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            </th>
+            <td mat-cell *matCellDef="let order">{{ order.orderId }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef class="sortable-header" (click)="sortBy('date')">
+              Date
+              <mat-icon class="sort-icon" *ngIf="sortColumn === 'date'">{{ sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            </th>
+            <td mat-cell *matCellDef="let order">{{ order.orderPurchaseTimestamp | date:'short' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="sortable-header" (click)="sortBy('status')">
+              Status
+              <mat-icon class="sort-icon" *ngIf="sortColumn === 'status'">{{ sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            </th>
+            <td mat-cell *matCellDef="let order">
+              <span class="status-badge" [attr.data-status]="order.orderStatus">{{ order.orderStatus }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="items">
+            <th mat-header-cell *matHeaderCellDef class="sortable-header" (click)="sortBy('items')">
+              Items
+              <mat-icon class="sort-icon" *ngIf="sortColumn === 'items'">{{ sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            </th>
+            <td mat-cell *matCellDef="let order">{{ order.orderItems.length }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef class="sortable-header" (click)="sortBy('total')">
+              Total
+              <mat-icon class="sort-icon" *ngIf="sortColumn === 'total'">{{ sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            </th>
+            <td mat-cell *matCellDef="let order">{{ orderTotal(order) | currency:'USD' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let order">
+              <button mat-icon-button (click)="openDetail(order.orderId)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div *ngIf="orders.length === 0" class="empty-state">
+          No orders found. Start shopping!
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

@@ -97,6 +97,25 @@ namespace backend.Controllers
             return Ok(orders);
         }
 
+        // GET: order/me/{orderId}  (customer only)
+        // Returns full details of a specific order including product info, scoped to the logged-in customer.
+        [HttpGet("me/{orderId}")]
+        [Authorize(Roles = "customer")]
+        public async Task<IActionResult> MyOrderDetail(string orderId)
+        {
+            var customerId = User.FindFirst("user_id")?.Value;
+            if (customerId == null) return Unauthorized();
+
+            var order = await _context.Order
+                .Where(o => o.OrderId == orderId && o.CustomerId == customerId)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync();
+
+            if (order == null) return NotFound();
+            return Ok(order);
+        }
+
         // GET: order/seller  (seller only)
         // Returns a summary of all orders that contain at least one item from the logged-in seller.
         [HttpGet("seller")]

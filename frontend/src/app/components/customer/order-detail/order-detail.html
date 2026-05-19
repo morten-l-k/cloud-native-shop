@@ -1,0 +1,91 @@
+<h2 mat-dialog-title>
+  Order Details
+  <span style="font-size: 0.85rem; font-weight: 400; color: #6b7280; margin-left: 8px;">{{ orderId }}</span>
+</h2>
+
+<mat-dialog-content style="min-width: 560px; padding-top: 8px;">
+  <div *ngIf="loading" style="display: flex; justify-content: center; padding: 3rem;">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" style="text-align: center; color: #ef4444; padding: 2rem;">
+    Failed to load order details.
+  </div>
+
+  <ng-container *ngIf="!loading && !error && order">
+    <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+      <div>
+        <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Status</div>
+        <span class="status-badge" [attr.data-status]="order.orderStatus">{{ order.orderStatus }}</span>
+      </div>
+      <div>
+        <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Order Date</div>
+        <div style="font-weight: 500;">{{ order.orderPurchaseTimestamp | date:'mediumDate' }}</div>
+      </div>
+      <div>
+        <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Est. Delivery</div>
+        <div style="font-weight: 500;">{{ order.orderEstimatedDeliveryDate | date:'mediumDate' }}</div>
+      </div>
+    </div>
+
+    <table mat-table [dataSource]="order.orderItems" style="width: 100%;">
+      <ng-container matColumnDef="product">
+        <th mat-header-cell *matHeaderCellDef>Product</th>
+        <td mat-cell *matCellDef="let item">{{ item.product?.productName || item.productId }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef>Category</th>
+        <td mat-cell *matCellDef="let item" style="color: #6b7280;">{{ item.product?.productCategoryName || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="qty">
+        <th mat-header-cell *matHeaderCellDef>Qty</th>
+        <td mat-cell *matCellDef="let item">{{ item.orderItemQuantity }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="unitPrice">
+        <th mat-header-cell *matHeaderCellDef>Unit Price</th>
+        <td mat-cell *matCellDef="let item">{{ item.price | currency:'USD' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="lineTotal">
+        <th mat-header-cell *matHeaderCellDef>Total</th>
+        <td mat-cell *matCellDef="let item" style="font-weight: 500;">
+          {{ (item.price ?? 0) * (item.orderItemQuantity ?? 0) | currency:'USD' }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+      <span style="font-size: 1rem; font-weight: 600;">
+        Order Total: {{ getTotal() | currency:'USD' }}
+      </span>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>
+
+<style>
+.status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: #f3f4f6;
+  color: #374151;
+  margin-top: 2px;
+}
+.status-badge[data-status="delivered"] { background-color: #d1fae5; color: #065f46; }
+.status-badge[data-status="shipped"] { background-color: #dbeafe; color: #1e40af; }
+.status-badge[data-status="canceled"] { background-color: #fee2e2; color: #991b1b; }
+.status-badge[data-status="created"] { background-color: #fef3c7; color: #92400e; }
+</style>
