@@ -80,9 +80,13 @@ CLAUDE.md
 *.agents
 .agents/
 skills-lock.json
+*.claude
 
 # macOS
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# Report folder in backend.Perf
+backend.Perf/reports/
 
