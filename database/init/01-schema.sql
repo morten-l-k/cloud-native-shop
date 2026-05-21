@@ -41,7 +41,9 @@ CREATE TABLE IF NOT EXISTS products (
     product_height_cm INTEGER,
     product_width_cm INTEGER,
     product_price DECIMAL(10,2),
-    product_stock INTEGER NOT NULL DEFAULT 0
+    product_stock INTEGER NOT NULL DEFAULT 0,
+    seller_id VARCHAR(64),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- Sellers table (olist_sellers_dataset.csv)
@@ -70,7 +72,6 @@ CREATE TABLE IF NOT EXISTS order_items (
     order_id VARCHAR(64) NOT NULL,
     order_item_quantity INTEGER NOT NULL,
     product_id VARCHAR(64) NOT NULL,
-    seller_id VARCHAR(64) NOT NULL,
     shipping_limit_date TIMESTAMP,
     price DECIMAL(10, 2),
     freight_value DECIMAL(10, 2),

@@ -55,6 +55,11 @@
         Total: {{ total$ | async | currency:'USD' }}
       </div>
 
+      <!-- Error message -->
+      <p *ngIf="errorMessage" style="color: #dc2626; font-size: 0.9rem; text-align: right; margin: 0;">
+        {{ errorMessage }}
+      </p>
+
       <!-- Stock warning + Pay -->
       <p *ngIf="hasStockIssue(items)" style="color: #dc2626; font-size: 0.9rem; text-align: right; margin: 0;">
         One or more quantities exceed available stock.
@@ -63,42 +68,15 @@
         <button
           type="button"
           (click)="openCheckoutOptions()"
-          [disabled]="hasStockIssue(items)"
-          [style.background]="hasStockIssue(items) ? '#9ca3af' : '#16a34a'"
-          [style.cursor]="hasStockIssue(items) ? 'not-allowed' : 'pointer'"
+          [disabled]="hasStockIssue(items) || isLoading"
+          [style.background]="hasStockIssue(items) || isLoading ? '#9ca3af' : '#16a34a'"
+          [style.cursor]="hasStockIssue(items) || isLoading ? 'not-allowed' : 'pointer'"
           style="display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.25rem; border-radius: 8px; border: none; color: white; font-weight: 600;"
         >
-          Pay
+          {{ isLoading ? 'Processing…' : 'Pay' }}
         </button>
       </div>
 
-    </div>
-  </ng-container>
-
-  <!-- Checkout modal -->
-  <ng-container *ngIf="isCheckoutModalOpen">
-    <div
-      (click)="closeCheckoutOptions()"
-      style="position: fixed; inset: 0; background: rgba(17, 24, 39, 0.45); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 1000;"
-    >
-      <div
-        (click)="$event.stopPropagation()"
-        style="width: min(100%, 420px); background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 20px 45px rgba(0,0,0,0.15); display: grid; gap: 1rem;"
-      >
-        <div>
-          <h3 style="margin: 0 0 0.5rem; color: #111827;">Continue checkout</h3>
-          <p style="margin: 0; color: #6b7280;">Choose how you would like to complete your purchase.</p>
-        </div>
-        <button type="button" (click)="goToLogin()" style="padding: 0.9rem 1rem; border-radius: 10px; border: 1px solid #d1d5db; background: white; color: #111827; font-weight: 600; cursor: pointer;">
-          Login
-        </button>
-        <button type="button" (click)="processPayment()" style="padding: 0.9rem 1rem; border-radius: 10px; border: none; background: #16a34a; color: white; font-weight: 600; cursor: pointer;">
-          Purchase as guest
-        </button>
-        <button type="button" (click)="closeCheckoutOptions()" style="padding: 0.75rem 1rem; border-radius: 10px; border: none; background: #f3f4f6; color: #374151; cursor: pointer;">
-          Cancel
-        </button>
-      </div>
     </div>
   </ng-container>
 

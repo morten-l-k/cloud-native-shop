@@ -41,13 +41,14 @@ ALTER TABLE order_items
     REFERENCES products(product_id)
     ON DELETE SET NULL;
 
--- Order items -> sellers
-\echo 'Adding order_items seller foreign key...'
-ALTER TABLE order_items 
-    ADD CONSTRAINT fk_order_item_seller 
-    FOREIGN KEY (seller_id) 
+-- Products -> sellers
+\echo 'Adding products seller foreign key (NOT VALID for existing data)...'
+ALTER TABLE products
+    ADD CONSTRAINT fk_product_seller
+    FOREIGN KEY (seller_id)
     REFERENCES sellers(seller_id)
-    ON DELETE SET NULL;
+    ON DELETE SET NULL
+    NOT VALID;
 
 -- Order payments -> orders
 \echo 'Adding order_payments order foreign key...'

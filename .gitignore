@@ -68,6 +68,7 @@ artifacts/
 
 # Others
 *.cache
+*.lscache
 *.dll
 *.exe
 *.pdb
@@ -75,6 +76,7 @@ artifacts/
 *.runtimeconfig.json
 *.staticwebassets.* 
 gemini.md
+CLAUDE.md
 *.agents
 .agents/
 skills-lock.json

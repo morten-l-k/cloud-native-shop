@@ -42,4 +42,9 @@ export class CartService {
     this.items = this.items.filter(i => i.product.id !== productId);
     this.cart.next([...this.items]);
   }
+
+  clearCart(): void {
+    this.items = [];
+    this.cart.next([]);
+  }
 }
