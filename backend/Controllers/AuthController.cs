@@ -1,5 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using backend.Data;
@@ -23,24 +22,20 @@ namespace backend.Controllers
             _configuration = configuration;
         }
 
-        public record CustomerLoginRequest(string Email, string Password);
-        public record SellerLoginRequest(string Id, string Password);
+        public record LoginRequest(string Id, string Password);
         public record LoginResponse(string Token, string Id, string Role);
-        public record RegisterCustomerRequest(string Password, string CustomerZipCodePrefix, string CustomerCity, string CustomerState, string FirstName, string LastName, string EmailAddress, string StreetAddress);
+        public record RegisterCustomerRequest(string Id, string Password, string CustomerZipCodePrefix, string CustomerCity, string CustomerState, string FirstName, string LastName, string EmailAddress, string StreetAddress);
         public record RegisterSellerRequest(string Id, string Password, string SellerZipCodePrefix, string SellerCity, string SellerState);
 
         // POST: auth/login/customer
         [HttpPost("login/customer")]
-        public async Task<IActionResult> LoginCustomer([FromBody] CustomerLoginRequest request)
+        public async Task<IActionResult> LoginCustomer([FromBody] LoginRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-                return BadRequest("Email and Password are required.");
-
-            if (!IsValidEmail(request.Email))
-                return BadRequest("Invalid email format.");
+            if (string.IsNullOrWhiteSpace(request.Id) || string.IsNullOrWhiteSpace(request.Password))
+                return BadRequest("Id and Password are required.");
 
             var customer = await _context.Customer
-                .FirstOrDefaultAsync(c => c.EmailAddress == request.Email);
+                .FirstOrDefaultAsync(c => c.CustomerId == request.Id);
 
             if (customer == null || request.Password != "password")
                 return Unauthorized("Invalid credentials.");
@@ -51,7 +46,7 @@ namespace backend.Controllers
 
         // POST: auth/login/seller
         [HttpPost("login/seller")]
-        public async Task<IActionResult> LoginSeller([FromBody] SellerLoginRequest request)
+        public async Task<IActionResult> LoginSeller([FromBody] LoginRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Id) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest("Id and Password are required.");
@@ -64,12 +59,6 @@ namespace backend.Controllers
 
             var token = GenerateJwtToken(seller.SellerId, "seller");
             return Ok(new LoginResponse(token, seller.SellerId, "seller"));
-        }
-
-        private static bool IsValidEmail(string email)
-        {
-            try { _ = new MailAddress(email); return true; }
-            catch { return false; }
         }
 
         private string GenerateJwtToken(string id, string role)
@@ -103,23 +92,20 @@ namespace backend.Controllers
         public async Task<IActionResult> RegisterCustomer([FromBody] RegisterCustomerRequest request)
         {
             // Validate input
-            if (string.IsNullOrWhiteSpace(request.EmailAddress) || string.IsNullOrWhiteSpace(request.Password))
-                return BadRequest("Email and Password are required.");
-
-            if (!IsValidEmail(request.EmailAddress))
-                return BadRequest("Invalid email format.");
+            if (string.IsNullOrWhiteSpace(request.Id) || string.IsNullOrWhiteSpace(request.Password))
+                return BadRequest("Id and Password are required.");
 
             // Check if customer ID already exists
             var existingCustomer = await _context.Customer
-                .FirstOrDefaultAsync(c => c.EmailAddress == request.EmailAddress);
+                .FirstOrDefaultAsync(c => c.CustomerId == request.Id);
 
             if (existingCustomer != null)
-                return BadRequest("Customer with this email already exists.");
+                return BadRequest("Customer ID already exists.");
 
             // Create new Customer object
             var customer = new Customer
             {
-                CustomerId = Guid.NewGuid().ToString(),
+                CustomerId = request.Id,
                 CustomerPassword = request.Password,
                 CustomerZipCodePrefix = request.CustomerZipCodePrefix,
                 CustomerCity = request.CustomerCity,

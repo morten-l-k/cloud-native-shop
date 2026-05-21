@@ -35,9 +35,9 @@ export class AuthService {
       .pipe(tap(response => this.saveLogin(response)));
   }
 
-  loginCustomer(email: string, password: string): Observable<LoginResponse> {
+  loginCustomer(id: string, password: string): Observable<LoginResponse> {
     return this.http
-      .post<LoginResponse>(`${this.apiUrl}/login/customer`, { Email: email, Password: password })
+      .post<LoginResponse>(`${this.apiUrl}/login/customer`, { Id: id, Password: password })
       .pipe(tap(response => this.saveLogin(response)));
   }
 
