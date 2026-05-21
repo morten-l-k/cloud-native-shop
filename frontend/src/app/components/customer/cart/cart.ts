@@ -59,7 +59,7 @@ export class CustomerCartPage implements OnInit {
     if (this.authService.getRole() === 'customer') {
       this.processPayment();
     } else {
-      void this.router.navigate(['/customer/dummy-login']);
+      void this.router.navigate(['/customer/login']);
     }
   }
 

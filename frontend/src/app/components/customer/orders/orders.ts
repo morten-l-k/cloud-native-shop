@@ -62,7 +62,7 @@ export class CustomerOrdersDashboardPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.authService.getRole() !== 'customer') {
-      void this.router.navigate(['/customer/dummy-login']);
+      void this.router.navigate(['/customer/login']);
       return;
     }
 
