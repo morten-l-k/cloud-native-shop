@@ -77,13 +77,8 @@ export class CustomerCartPage implements OnInit {
       const order = await firstValueFrom(this.orderService.placeOrder(orderItems));
       await firstValueFrom(this.orderService.payOrder(order.orderId));
 
-      this.cartService.clearCart();
-      void this.router.navigateByUrl('/customer/payment-success');
-    } catch (err: any) {
-      this.errorMessage = typeof err?.error === 'string' ? err.error : 'Checkout failed. Please try again.';
-    } finally {
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    }
+  goToLogin() {
+    this.closeCheckoutOptions();
+    this.router.navigate(['/customer/login']);
   }
 }
