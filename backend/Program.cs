@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using backend.Data;
+using backend.Filters;
 using backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +24,21 @@ builder.Services.AddControllers()
 
 // Add swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    var jwtScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token (without the 'Bearer ' prefix).",
+        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+    };
+    c.AddSecurityDefinition("Bearer", jwtScheme);
+    c.OperationFilter<AuthorizeOperationFilter>();
+});
 
 // Add HTTP client for fetching product images from Pexels API
 builder.Services.AddHttpClient();
