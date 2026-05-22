@@ -44,6 +44,10 @@ export class SellerService {
     return this.http.delete<void>(`/api/product/${id}`);
   }
 
+  relistProduct(id: string): Observable<void> {
+    return this.http.post<void>(`/api/product/${id}/relist`, {});
+  }
+
   getAnalytics(): Observable<SellerAnalytics> {
     return this.http.get<SellerAnalytics>(`${this.orderApiUrl}/seller/analytics`);
   }
