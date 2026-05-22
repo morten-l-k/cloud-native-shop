@@ -53,6 +53,18 @@ export class SellerDashboardPage implements OnInit, OnDestroy {
   loading = true;
   error: string | null = null;
 
+  selectedMonths = 6;
+  readonly timeframeOptions = [
+    { label: 'Last 3 months', value: 3 },
+    { label: 'Last 6 months', value: 6 },
+    { label: 'Last 12 months', value: 12 },
+    { label: 'All time', value: 0 },
+  ];
+
+  get timeframeLabel(): string {
+    return this.selectedMonths > 0 ? `last ${this.selectedMonths} months` : 'all time';
+  }
+
   ordersColumns: string[] = ['orderId', 'date', 'status', 'items', 'total', 'actions'];
   orderSortColumn: 'orderId' | 'date' | 'status' | 'items' | 'total' = 'date';
   orderSortDir: 'asc' | 'desc' = 'desc';
@@ -160,9 +172,9 @@ constructor(
 
     forkJoin({
       seller: this.sellerService.getMe().pipe(catchError(err => { console.error('Seller fetch failed', err); return of(null); })),
-      orders: this.sellerService.getOrders().pipe(catchError(err => { console.error('Orders fetch failed', err); return of([]); })),
+      orders: this.sellerService.getOrders(this.selectedMonths).pipe(catchError(err => { console.error('Orders fetch failed', err); return of([]); })),
       products: this.sellerService.getProducts().pipe(catchError(err => { console.error('Products fetch failed', err); return of([]); })),
-      analytics: this.sellerService.getAnalytics().pipe(catchError(err => { console.error('Analytics fetch failed', err); return of(null); }))
+      analytics: this.sellerService.getAnalytics(this.selectedMonths).pipe(catchError(err => { console.error('Analytics fetch failed', err); return of(null); }))
     }).subscribe({
       next: (data) => {
         this.seller = data.seller;
@@ -188,6 +200,10 @@ constructor(
         this.cdr.detectChanges();
       }
     });
+  }
+
+  onTimeframeChange(): void {
+    this.loadData();
   }
 
   ngOnDestroy(): void {

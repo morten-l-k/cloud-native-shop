@@ -117,16 +117,22 @@ namespace backend.Controllers
         }
 
         // GET: order/seller  (seller only)
-        // Returns a summary of all orders that contain at least one item from the logged-in seller.
+        // Returns a summary of orders that contain at least one item from the logged-in seller.
+        // months=6 (default) limits to the last N months; months=0 returns all time.
         [HttpGet("seller")]
         [Authorize(Roles = "seller")]
-        public async Task<IActionResult> SellerOrders()
+        public async Task<IActionResult> SellerOrders([FromQuery] int months = 6)
         {
             var sellerId = User.FindFirst("user_id")?.Value;
             if (sellerId == null) return Unauthorized();
 
-            var orders = await _context.Order
-                .Where(o => o.OrderItems.Any(i => i.Product!.SellerId == sellerId))
+            var query = _context.Order
+                .Where(o => o.OrderItems.Any(i => i.Product!.SellerId == sellerId));
+
+            if (months > 0)
+                query = query.Where(o => o.OrderPurchaseTimestamp >= DateTime.UtcNow.AddMonths(-months));
+
+            var orders = await query
                 .Select(o => new
                 {
                     o.OrderId,
@@ -145,15 +151,21 @@ namespace backend.Controllers
 
         // GET: order/seller/analytics  (seller only)
         // Returns aggregated revenue and order stats for the logged-in seller.
+        // months=6 (default) limits to the last N months; months=0 returns all time.
         [HttpGet("seller/analytics")]
         [Authorize(Roles = "seller")]
-        public async Task<IActionResult> SellerAnalytics()
+        public async Task<IActionResult> SellerAnalytics([FromQuery] int months = 6)
         {
             var sellerId = User.FindFirst("user_id")?.Value;
             if (sellerId == null) return Unauthorized();
 
-            var items = await _context.OrderItem
-                .Where(i => i.Product!.SellerId == sellerId)
+            var itemsQuery = _context.OrderItem
+                .Where(i => i.Product!.SellerId == sellerId);
+
+            if (months > 0)
+                itemsQuery = itemsQuery.Where(i => i.Order.OrderPurchaseTimestamp >= DateTime.UtcNow.AddMonths(-months));
+
+            var items = await itemsQuery
                 .Include(i => i.Order)
                 .ToListAsync();
 
@@ -171,7 +183,6 @@ namespace backend.Controllers
                     OrderCount = g.Select(i => i.OrderId).Distinct().Count()
                 })
                 .OrderBy(m => m.Month)
-                .TakeLast(6)
                 .ToList();
 
             var statusBreakdown = items

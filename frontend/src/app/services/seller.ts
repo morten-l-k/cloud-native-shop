@@ -16,8 +16,8 @@ export class SellerService {
     return this.http.get<Seller>(`${this.apiUrl}/me`);
   }
 
-  getOrders(): Observable<SellerOrderSummary[]> {
-    return this.http.get<SellerOrderSummary[]>(`${this.orderApiUrl}/seller`);
+  getOrders(months = 6): Observable<SellerOrderSummary[]> {
+    return this.http.get<SellerOrderSummary[]>(`${this.orderApiUrl}/seller?months=${months}`);
   }
 
   getOrderDetail(orderId: string): Observable<SellerOrderDetail> {
@@ -44,7 +44,7 @@ export class SellerService {
     return this.http.delete<void>(`/api/product/${id}`);
   }
 
-  getAnalytics(): Observable<SellerAnalytics> {
-    return this.http.get<SellerAnalytics>(`${this.orderApiUrl}/seller/analytics`);
+  getAnalytics(months = 6): Observable<SellerAnalytics> {
+    return this.http.get<SellerAnalytics>(`${this.orderApiUrl}/seller/analytics?months=${months}`);
   }
 }
