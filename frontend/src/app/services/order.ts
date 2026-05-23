@@ -23,4 +23,8 @@ export class OrderService {
   payOrder(orderId: string): Observable<string> {
     return this.http.post('/api/payment', { OrderId: orderId }, { responseType: 'text' });
   }
+
+  shipOrder(orderId: string): Observable<string> {
+    return this.http.post('/api/shipment', { OrderId: orderId }, { responseType: 'text' });
+  }
 }

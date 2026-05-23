@@ -311,6 +311,21 @@ constructor(
     });
   }
 
+  relistProduct(product: SellerProduct): void {
+    this.sellerService.relistProduct(product.productId).subscribe({
+      next: () => {
+        this.products = this.products.map(p =>
+          p.productId === product.productId ? { ...p, isActive: true } : p
+        );
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Relist failed', err);
+        alert('Failed to relist product.');
+      }
+    });
+  }
+
   openOrderDetail(orderId: string): void {
     this.dialog.open(OrderDetailDialog, {
       data: orderId,

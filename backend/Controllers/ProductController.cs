@@ -108,9 +108,9 @@ namespace backend.Controllers
 
             query = sort switch
             {
-                "price_asc"  => query.OrderBy(p => p.ProductPrice),
-                "price_desc" => query.OrderByDescending(p => p.ProductPrice),
-                _            => query
+                "price_asc"  => query.OrderBy(p => p.ProductPrice).ThenBy(p => p.ProductId),
+                "price_desc" => query.OrderByDescending(p => p.ProductPrice).ThenBy(p => p.ProductId),
+                _            => query.OrderBy(p => p.ProductId)
             };
 
             var totalCount = await query.CountAsync();
@@ -178,8 +178,12 @@ namespace backend.Controllers
                 product.ProductId,
                 ProductName = product.ProductName,
                 product.ProductCategoryName,
+                product.ProductDescription,
                 ProductPrice = product.ProductPrice ?? 0m,
-                ProductStock = product.ProductStock ?? 0
+                ProductStock = product.ProductStock ?? 0,
+                product.IsActive,
+                TotalSold = 0,
+                TotalRevenue = 0m,
             });
         }
 
@@ -236,6 +240,24 @@ namespace backend.Controllers
             if (product.SellerId != sellerId) return Forbid();
 
             product.IsActive = false;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // POST: Product/{id}/relist  (seller only, must own the product — re-activates a delisted product)
+        [HttpPost("{id}/relist")]
+        [Authorize(Roles = "seller")]
+        public async Task<IActionResult> Relist(string id)
+        {
+            var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
+
+            var product = await _context.Product.FirstOrDefaultAsync(p => p.ProductId == id);
+            if (product == null) return NotFound();
+            if (product.SellerId != sellerId) return Forbid();
+
+            product.IsActive = true;
             await _context.SaveChangesAsync();
 
             return NoContent();

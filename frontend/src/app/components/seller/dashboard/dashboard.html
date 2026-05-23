@@ -239,8 +239,11 @@
                 <button mat-icon-button matTooltip="Edit product" (click)="openProductForm(p)" [disabled]="!p.isActive">
                   <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button color="warn" matTooltip="Delist product" (click)="delistProduct(p)" [disabled]="!p.isActive">
+                <button *ngIf="p.isActive" mat-icon-button color="warn" matTooltip="Delist product" (click)="delistProduct(p)">
                   <mat-icon>remove_shopping_cart</mat-icon>
+                </button>
+                <button *ngIf="!p.isActive" mat-icon-button color="primary" matTooltip="Relist product" (click)="relistProduct(p)">
+                  <mat-icon>add_shopping_cart</mat-icon>
                 </button>
               </td>
             </ng-container>
