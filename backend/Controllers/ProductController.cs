@@ -227,6 +227,24 @@ namespace backend.Controllers
             });
         }
 
+        // POST: Product/{id}/relist  (seller only, must own the product)
+        [HttpPost("{id}/relist")]
+        [Authorize(Roles = "seller")]
+        public async Task<IActionResult> Relist(string id)
+        {
+            var sellerId = User.FindFirst("user_id")?.Value;
+            if (sellerId == null) return Unauthorized();
+
+            var product = await _context.Product.FirstOrDefaultAsync(p => p.ProductId == id);
+            if (product == null) return NotFound();
+            if (product.SellerId != sellerId) return Forbid();
+
+            product.IsActive = true;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // DELETE: Product/{id}  (seller only, must own the product — soft-delists rather than hard-deletes)
         [HttpDelete("{id}")]
         [Authorize(Roles = "seller")]

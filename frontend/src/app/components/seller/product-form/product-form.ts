@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, ChangeDetectorRef, Inject, OnInit, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -34,23 +34,27 @@ export class ProductFormDialog implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<ProductFormDialog>,
     private sellerService: SellerService,
     @Optional() @Inject(MAT_DIALOG_DATA) public product: SellerProduct | null
   ) {
     this.isEdit = !!product;
     this.form = this.fb.group({
-      name:        [product?.productName ?? '',    Validators.required],
-      category:    [product?.productCategoryName ?? ''],
+      name:        [product?.productName ?? '',         Validators.required],
+      category:    [product?.productCategoryName ?? '', Validators.required],
       description: [product?.productDescription ?? ''],
-      price:       [product?.productPrice ?? null, [Validators.required, Validators.min(0.01)]],
-      stock:       [product?.productStock ?? 0,    [Validators.required, Validators.min(0)]],
+      price:       [product?.productPrice ?? null,      [Validators.required, Validators.min(0.01)]],
+      stock:       [product?.productStock ?? 0,         [Validators.required, Validators.min(0)]],
     });
   }
 
   ngOnInit(): void {
     this.sellerService.getCategories().subscribe({
-      next: (cats) => this.categories = cats,
+      next: (cats) => {
+        this.categories = cats;
+        this.cdr.detectChanges();
+      },
       error: () => {}
     });
   }
