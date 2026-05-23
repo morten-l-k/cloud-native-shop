@@ -74,8 +74,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     product_id VARCHAR(64) NOT NULL,
     shipping_limit_date TIMESTAMP,
     price DECIMAL(10, 2),
-    freight_value DECIMAL(10, 2),
-    CONSTRAINT uk_order_item UNIQUE (order_id, order_item_quantity)
+    freight_value DECIMAL(10, 2)
 );
 
 -- Order payments table (olist_order_payments_dataset.csv)
