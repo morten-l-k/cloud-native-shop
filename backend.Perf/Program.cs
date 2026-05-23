@@ -1,13 +1,19 @@
 using backend.Perf.Scenarios;
 using NBomber.CSharp;
 
-var baseUrl = args.FirstOrDefault() ?? "http://localhost:8080";
+var baseUrl = args.ElementAtOrDefault(0) ?? "http://localhost:8080";
+var targetScenario = args.ElementAtOrDefault(1);
 
 using var http = new HttpClient { BaseAddress = new Uri(baseUrl) };
 
-NBomberRunner
+var runner = NBomberRunner
     .RegisterScenarios(
         BrowseProductsScenario.Create(http),
-        CustomerLogInScenario.Create(http)
-    )
-    .Run();
+        CustomerLogInScenario.Create(http),
+        UserCreationScenario.Create(http)
+    );
+
+if (targetScenario is not null)
+    runner = runner.WithTargetScenarios(targetScenario);
+
+runner.Run();
