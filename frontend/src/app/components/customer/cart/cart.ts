@@ -59,7 +59,7 @@ export class CustomerCartPage implements OnInit {
     if (this.authService.getRole() === 'customer') {
       this.processPayment();
     } else {
-      void this.router.navigate(['/customer/dummy-login']);
+      void this.router.navigate(['/customer/login']);
     }
   }
 
@@ -76,6 +76,7 @@ export class CustomerCartPage implements OnInit {
       }));
       const order = await firstValueFrom(this.orderService.placeOrder(orderItems));
       await firstValueFrom(this.orderService.payOrder(order.orderId));
+      await firstValueFrom(this.orderService.shipOrder(order.orderId));
 
       this.cartService.clearCart();
       void this.router.navigateByUrl('/customer/payment-success');

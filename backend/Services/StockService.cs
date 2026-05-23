@@ -21,6 +21,12 @@ namespace backend.Services
             return rows > 0;
         }
 
+        public async Task RestoreAsync(string productId, int quantity) =>
+            await context.Product
+                .Where(p => p.ProductId == productId)
+                .ExecuteUpdateAsync(s =>
+                    s.SetProperty(p => p.ProductStock, p => p.ProductStock + quantity));
+
         public async Task<bool> SetStockAsync(string productId, string sellerId, int newStock)
         {
             int rows = await context.Product
