@@ -20,6 +20,11 @@
   gap: 0.5rem;
 }
 
+.timeframe-select {
+  width: 160px;
+  margin-bottom: -1.25em;
+}
+
 .rotating {
   animation: rotate 1.5s linear infinite;
 }

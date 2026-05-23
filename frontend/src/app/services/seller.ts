@@ -16,8 +16,8 @@ export class SellerService {
     return this.http.get<Seller>(`${this.apiUrl}/me`);
   }
 
-  getOrders(): Observable<SellerOrderSummary[]> {
-    return this.http.get<SellerOrderSummary[]>(`${this.orderApiUrl}/seller`);
+  getOrders(months = 6): Observable<SellerOrderSummary[]> {
+    return this.http.get<SellerOrderSummary[]>(`${this.orderApiUrl}/seller?months=${months}`);
   }
 
   getOrderDetail(orderId: string): Observable<SellerOrderDetail> {
