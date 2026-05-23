@@ -272,7 +272,10 @@ namespace backend.Controllers
             request.Headers.Add("Authorization", "VJWCMspXFn1QKt5cqPwTScVFpJsOl35a6x9KRYThPZ8VjPhv6o2trkBv");
 
             using var response = await new HttpClient().SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                return "https://images.pexels.com/photos/9582578/pexels-photo-9582578.jpeg?auto=compress&cs=tinysrgb&h=350";
+            }
 
             using var stream = await response.Content.ReadAsStreamAsync();
             using var json = await System.Text.Json.JsonDocument.ParseAsync(stream);
