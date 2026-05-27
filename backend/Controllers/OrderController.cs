@@ -37,10 +37,10 @@ namespace backend.Controllers
 
             // Verify all products exist
             var productIds = request.Items.Select(i => i.ProductId).ToList();
-            var existingProductIds = await _context.Product
+            var existingProductIds = (await _context.Product
                 .Where(p => productIds.Contains(p.ProductId))
                 .Select(p => p.ProductId)
-                .ToHashSetAsync();
+                .ToListAsync()).ToHashSet();
 
             var missingProduct = request.Items.FirstOrDefault(i => !existingProductIds.Contains(i.ProductId));
             if (missingProduct != null)
