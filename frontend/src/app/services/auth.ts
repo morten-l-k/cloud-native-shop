@@ -19,6 +19,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   private getStoredUser(): LoginResponse | null {
+    if (typeof localStorage === 'undefined') return null;
     const token = localStorage.getItem('token');
     const id = localStorage.getItem('userId');
     const role = localStorage.getItem('role') as 'customer' | 'seller' | null;
@@ -42,28 +43,32 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('role');
+    }
     this.currentUserSubject.next(null);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
   }
 
   getUserId(): string | null {
-    return localStorage.getItem('userId');
+    return typeof localStorage !== 'undefined' ? localStorage.getItem('userId') : null;
   }
 
   getRole(): string | null {
-    return localStorage.getItem('role');
+    return typeof localStorage !== 'undefined' ? localStorage.getItem('role') : null;
   }
 
   private saveLogin(response: LoginResponse): void {
-    localStorage.setItem('token', response.token);
-    localStorage.setItem('userId', response.id);
-    localStorage.setItem('role', response.role);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('userId', response.id);
+      localStorage.setItem('role', response.role);
+    }
     this.currentUserSubject.next(response);
   }
 }

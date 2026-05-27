@@ -48,7 +48,7 @@ export class SellerService {
     return this.http.post<void>(`/api/product/${id}/relist`, {});
   }
 
-  getAnalytics(): Observable<SellerAnalytics> {
-    return this.http.get<SellerAnalytics>(`${this.orderApiUrl}/seller/analytics`);
+  getAnalytics(months = 6): Observable<SellerAnalytics> {
+    return this.http.get<SellerAnalytics>(`${this.orderApiUrl}/seller/analytics?months=${months}`);
   }
 }

@@ -23,6 +23,8 @@ namespace backend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<CloudNativeShop.Backend.Models.OrderItem>()
                 .HasOne(oi => oi.Order)
                 .WithMany(o => o.OrderItems)
@@ -32,6 +34,21 @@ namespace backend.Data
                 .HasOne(oi => oi.Product)
                 .WithMany()
                 .HasForeignKey(oi => oi.ProductId);
+
+            if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            {
+                foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+                {
+                    var properties = entityType.GetProperties()
+                        .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?));
+                    foreach (var property in properties)
+                    {
+                        property.SetValueConverter(new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<decimal, double>(
+                            v => (double)v,
+                            v => (decimal)v));
+                    }
+                }
+            }
         }
     }
 }

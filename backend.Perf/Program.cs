@@ -10,7 +10,8 @@ var runner = NBomberRunner
     .RegisterScenarios(
         BrowseProductsScenario.Create(http),
         CustomerLogInScenario.Create(http),
-        UserCreationScenario.Create(http)
+        UserCreationScenario.Create(http),
+        StockExhaustionScenario.Create(http)
     );
 
 if (targetScenario is not null)

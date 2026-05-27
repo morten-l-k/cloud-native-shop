@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>backend</RootNamespace>
@@ -9,28 +9,28 @@
 
   <ItemGroup>
     <!-- PostgreSQL Entity Framework Core Provider -->
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
 
     <!-- Design-time tools for EF Core (migrations, scaffolding) -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
     <!-- Tools for EF Core commands -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
     <!-- Scaffolding tools for controllers and views -->
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
 
     <!-- Swagger for API documentation -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 
     <!-- JWT Bearer authentication -->
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
   </ItemGroup>
 
 </Project>
