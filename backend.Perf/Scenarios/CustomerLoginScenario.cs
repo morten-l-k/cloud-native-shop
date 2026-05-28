@@ -7,11 +7,11 @@ namespace backend.Perf.Scenarios;
 
 public static class CustomerLogInScenario
 {
-    public static ScenarioProps Create(HttpClient http)
+    public static ScenarioProps Create(HttpClient http, int userCount)
     {
         string[] emails = [];
 
-        return Scenario.Create("customer_log_in", async context =>
+        return Scenario.Create($"customer_log_in_{userCount}", async context =>
         {
             var email = emails[Random.Shared.Next(0, emails.Length)];
 
