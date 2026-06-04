@@ -18,7 +18,12 @@ var scenarios = new[]
     SellerDashboardScalingScenario.Create(http, 100),
     SellerDashboardScalingScenario.Create(http, 500),
     SellerDashboardScalingScenario.Create(http, 1000),
-};
+    
+    CheckoutScenario.Create(http),
+
+    MixedWorkloadScenario.Create(http),
+}.ToArray();
+
 
 var runner = NBomberRunner.RegisterScenarios(scenarios);
 

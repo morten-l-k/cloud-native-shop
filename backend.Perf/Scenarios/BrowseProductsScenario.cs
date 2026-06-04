@@ -38,10 +38,10 @@ public static class BrowseProductsScenario
             return Response.Ok();
         })
         .WithLoadSimulations(
-            // Ramp up from 0 to 10 req/s over the first 30 seconds
-            Simulation.RampingInject(rate: 10, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(30)),
-            // Hold at 10 req/s for 60 seconds to get stable measurements
-            Simulation.Inject(rate: 10, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(60))
+            // Ramp up from 0 to 100 req/s over the first 30 seconds
+            Simulation.RampingInject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10)),
+            // Hold at 100 req/s for 60 seconds to get stable measurements
+            Simulation.Inject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(30))
         );
     }
 }

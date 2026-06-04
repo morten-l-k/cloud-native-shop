@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="NBomber" Version="5.*" />
+    <PackageReference Include="MathNet.Numerics" Version="4.*" />
   </ItemGroup>
 
 </Project>
