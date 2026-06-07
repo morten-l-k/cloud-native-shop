@@ -13,6 +13,7 @@ var scenarios = new[]
     CustomerLogInScenario.Create(http, 500),
     UserCreationScenario.Create(http),
     StockExhaustionScenario.Create(http),
+    HotProductContentionScenario.Create(http),
 
     SellerDashboardScalingScenario.Create(http, 10),
     SellerDashboardScalingScenario.Create(http, 100),
