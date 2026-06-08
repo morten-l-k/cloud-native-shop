@@ -11,39 +11,23 @@ public static class StockExhaustionScenario
     public static ScenarioProps Create(HttpClient http)
     {
         string? perfTestProductId = null;
-        const int initialStock = 100;
+        const int initialStock = 1000; 
         const string sellerId = "3442f8959a84dea7ee197c632cb2df15"; // Sample seller from dataset
+        var tokens = new List<string>();
 
         return Scenario.Create("stock_exhaustion_concurrency", async context =>
         {
-            // Step 1: Create a unique customer for this iteration to avoid login conflicts
-            var uniqueEmail = $"perf-{Guid.NewGuid():N}@exhaustion.dev";
-            var registerResponse = await http.PostAsJsonAsync("/auth/register/customer", new
-            {
-                password = "password",
-                customerZipCodePrefix = "12345",
-                customerCity = "PerfCity",
-                customerState = "PC",
-                firstName = "Race",
-                lastName = "Condition",
-                emailAddress = uniqueEmail,
-                streetAddress = "Concurrency Lane 1"
-            });
+            if (tokens.Count == 0)
+                return Response.Fail(message: "No tokens available. Initialization might have failed.");
 
-            if (!registerResponse.IsSuccessStatusCode)
-                return Response.Fail(message: $"Register failed: {registerResponse.StatusCode}");
-
-            var registerBody = await registerResponse.Content.ReadAsStringAsync();
-            var token = JsonDocument.Parse(registerBody).RootElement.GetProperty("token").GetString();
-
-            using var authed = new HttpClient { BaseAddress = http.BaseAddress };
-            authed.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            // Step 1: Pick a random pre-registered customer
+            var token = tokens[Random.Shared.Next(tokens.Count)];
 
             // Step 2: Attempt to buy the limited stock product
-            // We use a stopwatch to measure the exact time the DB transaction takes
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            
-            var orderResponse = await authed.PostAsJsonAsync("/order", new
+            // We use a shared HttpClient and HttpRequestMessage to minimize overhead
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/order");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            request.Content = JsonContent.Create(new
             {
                 items = new[]
                 {
@@ -51,20 +35,21 @@ public static class StockExhaustionScenario
                 }
             });
 
-            watch.Stop();
+            var response = await http.SendAsync(request);
 
-            if (orderResponse.StatusCode == System.Net.HttpStatusCode.Created)
+            if (response.StatusCode == System.Net.HttpStatusCode.Created)
             {
-                return Response.Ok(sizeBytes: 0, statusCode: "201");
+                return Response.Ok(statusCode: "201");
             }
             
-            if (orderResponse.StatusCode == System.Net.HttpStatusCode.Conflict)
+            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
-                // This is an "expected failure" in this scenario
-                return Response.Ok(sizeBytes: 0, statusCode: "409");
+                // We mark 409 as Fail to show it clearly in the report as the point where stock is gone.
+                // This creates a visible "cliff" in the OK vs Fail graph.
+                return Response.Fail(message: "Stock Exhausted", statusCode: "409");
             }
 
-            return Response.Fail(message: $"Unexpected Status: {orderResponse.StatusCode}", statusCode: ((int)orderResponse.StatusCode).ToString());
+            return Response.Fail(message: $"Unexpected Status: {response.StatusCode}", statusCode: ((int)response.StatusCode).ToString());
         })
         .WithInit(async context =>
         {
@@ -93,11 +78,38 @@ public static class StockExhaustionScenario
             perfTestProductId = JsonDocument.Parse(createBody).RootElement.GetProperty("productId").GetString();
             
             context.Logger.Information($"Created product {perfTestProductId} with {initialStock} units.");
+
+            // 3. Pre-register a pool of customers to avoid registration overhead during the test
+            context.Logger.Information("Pre-registering 100 customers...");
+            for (int i = 0; i < 100; i++)
+            {
+                var email = $"stock-perf-{i}-{Guid.NewGuid():N}@test.com";
+                var regRes = await http.PostAsJsonAsync("/auth/register/customer", new
+                {
+                    password = "password",
+                    customerZipCodePrefix = "12345",
+                    customerCity = "PerfCity",
+                    customerState = "PC",
+                    firstName = "Perf",
+                    lastName = $"User{i}",
+                    emailAddress = email,
+                    streetAddress = "Load Street"
+                });
+                
+                if (regRes.IsSuccessStatusCode)
+                {
+                    var regBody = await regRes.Content.ReadAsStringAsync();
+                    var token = JsonDocument.Parse(regBody).RootElement.GetProperty("token").GetString();
+                    if (token != null) tokens.Add(token);
+                }
+            }
+            context.Logger.Information($"Successfully pre-registered {tokens.Count} customers.");
         })
         .WithLoadSimulations(
-            // Burst: Start with a heavy burst to force many concurrent requests hitting the same row
-            Simulation.RampingInject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(10))
+            // Ramp up from 1 to 100 requests per second over 30 seconds.
+            Simulation.RampingInject(rate: 100, interval: TimeSpan.FromSeconds(1), during: TimeSpan.FromSeconds(30))
         )
-        .WithWarmUpDuration(TimeSpan.FromSeconds(5));
+        .WithWarmUpDuration(TimeSpan.FromSeconds(1));
     }
 }
+
