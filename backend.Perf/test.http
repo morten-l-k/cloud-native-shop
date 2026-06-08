@@ -1,0 +1,8 @@
+POST http://localhost:8080/order
+
+{
+    "items": [
+        { "productId": "product-1", "quantity": 1 },
+        { "productId": "product-2", "quantity": 2 }
+    ]
+}
