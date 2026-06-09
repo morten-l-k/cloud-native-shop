@@ -35,3 +35,6 @@ To rebuild system from scratch, run:
 ```bash
 docker compose up --build --force-recreate --renew-anon-volumes
 ```
+
+# Information on the use of GAI
+During code writing of this entire project, AI assistance was used for troubleshooting issues and bugs in the code, suggesting overall coding solutions, refactoring code, providing tutoring, offering explanations of existing code, and recommending libraries and modules used during development. Simply stated, the code in this project can be said to have been written with AI assistance, but the authors have taken care to manually evaluate and review the code directly produced in this way.
