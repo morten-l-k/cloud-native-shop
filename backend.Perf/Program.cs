@@ -19,6 +19,14 @@ var scenarios = new[]
     SellerDashboardScalingScenario.Create(http, 100),
     SellerDashboardScalingScenario.Create(http, 500),
     SellerDashboardScalingScenario.Create(http, 1000),
+
+    SellerDashboardConcurrentScenario.Create(http, productCount: 100, sellerCount: 5),
+    SellerDashboardConcurrentScenario.Create(http, productCount: 100, sellerCount: 10),
+    SellerDashboardConcurrentScenario.Create(http, productCount: 100, sellerCount: 25),
+
+    SellerDashboardConcurrentScenario.Create(http, productCount: 500, sellerCount: 5),
+    SellerDashboardConcurrentScenario.Create(http, productCount: 500, sellerCount: 10),
+    SellerDashboardConcurrentScenario.Create(http, productCount: 500, sellerCount: 25),
     
     CheckoutScenario.Create(http),
 
